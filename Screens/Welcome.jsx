@@ -1,25 +1,39 @@
-import Reactm, { useState } from 'react';
-import {StyleSheet, SafeAreaView,View, Text, Image} from 'react-native'
+import React, { useState } from 'react';
+import {StyleSheet, SafeAreaView,View, Text, Image, TouchableOpacity} from 'react-native'
 import MaterialIcons from '@expo/vector-icons/MaterialIcons';
 import Knewave from '../assets/Fonts/Knewave/Knewave-Regular.ttf';
 import { useFonts } from 'expo-font';
-const [fontsLoaded] = useFonts({
-  Knewave: Knewave
-})
-const Welcome = () => {
+import { createStackNavigator } from '@react-navigation/stack';
+import { NavigationContainer } from '@react-navigation/native';
+import AfterWelcome from './AfterWelcome';
+
+const Welcome = ({navigation}) => {
+  const [fontsLoaded] = useFonts({
+    Knewave: Knewave
+  })
+
+  if (!fontsLoaded) {
+    return null; // Handle loading state
+  }
+
   return (
-    <SafeAreaView>
+    // <SafeAreaView>
         
         <View style={styles.container}>
             <Text styles={styles.Logo_text}>
-                Easy Days
+               Easy Days
             </Text>
             <View>
                 <Image source={require('../Imgs/Welcome-cuate.png')}/>
             </View>
-            
+            <TouchableOpacity 
+              style={styles.button}
+              onPress={() => navigation.navigate('AfterWelcome')}
+            >
+                <Text style={styles.buttonText}>Get Started</Text>
+            </TouchableOpacity>
         </View>
-    </SafeAreaView>
+    // </SafeAreaView>
   )
 }
 
@@ -27,18 +41,31 @@ export default Welcome
 
 
 const styles = StyleSheet.create({
-  text: {
+
+  container: {
+    flex: 1,
+    backgroundColor: '#fff',
+    alignItems: 'center',
+    justifyContent: 'center',
+  },
+
+  Logo_text: {
     fontFamily: 'Knewave',
     fontSize: 24,
   },
 
-  Logo_text: {
-    fontFamily: ''
+  button:{
+    alignItems: 'center',
+    justifyContent: 'center',
+    paddingVertical: 12,
+    paddingHorizontal: 32,
+    borderRadius: 4,
+    elevation: 3,
+    backgroundColor: '#000080',
+    marginTop: 20
   },
-  // container:{
-  //   flex: 1,
-  //   backgroundColor: '#fff',
-  //   alignItems: 'center',
-  //   justifyContent: 'center',
-  // }
+  buttonText:{
+    color: '#fff'
+    
+  }
 });
