@@ -1,8 +1,11 @@
-import React from 'react';
+import Reactm, { useState } from 'react';
 import {StyleSheet, SafeAreaView,View, Text, Image} from 'react-native'
 import MaterialIcons from '@expo/vector-icons/MaterialIcons';
-
-
+import Knewave from '../assets/Fonts/Knewave/Knewave-Regular.ttf';
+import { useFonts } from 'expo-font';
+const [fontsLoaded] = useFonts({
+  Knewave: Knewave
+})
 const Welcome = () => {
   return (
     <SafeAreaView>
@@ -24,6 +27,11 @@ export default Welcome
 
 
 const styles = StyleSheet.create({
+  text: {
+    fontFamily: 'Knewave',
+    fontSize: 24,
+  },
+
   Logo_text: {
     fontFamily: ''
   },
