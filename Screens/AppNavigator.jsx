@@ -5,6 +5,7 @@ import { NavigationContainer } from '@react-navigation/native';
 import AfterWelcome from './AfterWelcome';
 import Welcome from './Welcome';
 import MaterialIcons from '@expo/vector-icons/MaterialIcons';
+import Login from '../Components/Login';
 
 const Stack = createStackNavigator();
 
@@ -32,8 +33,14 @@ const AppNavigator = () => {
                     headerTitle: '',
                     headerStyle: { 
                         shadowColor: 'transparent',
+                        elevation: 0,
                     },
-            })}
+                    })}
+                />
+                <Stack.Screen
+                    name="Login"
+                    component={Login}
+                    options={{headerShown: false}}
                 />
             </Stack.Navigator>
         </NavigationContainer>
