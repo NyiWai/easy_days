@@ -8,21 +8,23 @@ import { NavigationContainer } from '@react-navigation/native';
 import AfterWelcome from './AfterWelcome';
 
 const Welcome = ({navigation}) => {
-  const [fontsLoaded] = useFonts({
-    Knewave: Knewave
-  })
+  // const [fontsLoaded] = useFonts({
+  //   Knewave: Knewave
+  // })
 
-  if (!fontsLoaded) {
-    return null; // Handle loading state
-  }
+  // if (!fontsLoaded) {
+  //   return null; // Handle loading state
+  // }
 
   return (
     // <SafeAreaView>
         
         <View style={styles.container}>
-            <Text styles={styles.Logo_text}>
-               Easy Days
-            </Text>
+            <View>
+                <Text style={styles.Logo_text}>
+                    Easy Days
+                </Text>
+            </View>
             <View>
                 <Image source={require('../Imgs/Welcome-cuate.png')}/>
             </View>
@@ -46,12 +48,14 @@ const styles = StyleSheet.create({
     flex: 1,
     backgroundColor: '#fff',
     alignItems: 'center',
-    justifyContent: 'center',
+    // justifyContent: 'center',
   },
 
   Logo_text: {
     fontFamily: 'Knewave',
     fontSize: 24,
+    marginTop: '20%',
+    marginBottom: '10%',
   },
 
   button:{
@@ -61,7 +65,7 @@ const styles = StyleSheet.create({
     paddingHorizontal: 32,
     borderRadius: 4,
     elevation: 3,
-    backgroundColor: '#000080',
+    backgroundColor: '#004AED',
     marginTop: 20
   },
   buttonText:{
