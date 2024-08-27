@@ -8,13 +8,13 @@ import { NavigationContainer } from '@react-navigation/native';
 import AfterWelcome from './AfterWelcome';
 
 const Welcome = ({navigation}) => {
-  // const [fontsLoaded] = useFonts({
-  //   Knewave: Knewave
-  // })
+  const [fontsLoaded] = useFonts({
+    Knewave: Knewave
+  })
 
-  // if (!fontsLoaded) {
-  //   return null; // Handle loading state
-  // }
+  if (!fontsLoaded) {
+    return null; // Handle loading state
+  }
 
   return (
     // <SafeAreaView>

@@ -1,9 +1,10 @@
 import React, { Component } from 'react'
 import { TouchableOpacity, StyleSheet,View, Text, Image } from 'react-native'
-import Login from "../Components/Login"
-import Signup from "../Components/Signup"
+import SignIn from "../Components/SignIn"
+import SignUp from "../Components/SignUp"
+import MainCategories from './MainCategories'
 
-const AfterWelcome = () => {
+const AfterWelcome = ({navigation}) => {
   return (
     <>
         <View style={styles.container}>
@@ -19,18 +20,24 @@ const AfterWelcome = () => {
             <View style={styles.buttonContainer}>
                 <TouchableOpacity 
                 style={styles.button}
-                onPress={() => navigation.navigate('Login')}
+                onPress={() => navigation.navigate('SignIn')}
                 >
-                    <Text style={styles.buttonText}>Login</Text>
+                    <Text style={styles.buttonText}>SignIn</Text>
                 </TouchableOpacity>
 
                 <TouchableOpacity 
                 style={styles.button}
-                onPress={() => navigation.navigate('Signup')}
+                onPress={() => navigation.navigate('SignUp')}
                 >
                     <Text style={styles.buttonText}>Sign Up</Text>
                 </TouchableOpacity>
             </View>
+            <TouchableOpacity 
+                style={styles.button}
+                onPress={() => navigation.navigate('MainCategories')}
+                >
+                    <Text style={styles.buttonText}>MainCate</Text>
+              </TouchableOpacity>
         </View>
     </>
   )
