@@ -3,13 +3,23 @@ import Ionicons from '@expo/vector-icons/Ionicons';
 import MaterialIcons from '@expo/vector-icons/MaterialIcons';
 import { useNavigation, NavigationContainer } from '@react-navigation/native';
 import { createNativeStackNavigator } from '@react-navigation/native-stack';
-import { View, Text, TextInput, Pressable, StyleSheet, TouchableOpacity, KeyboardAvoidingView } from 'react-native';
+import { View, Text, TextInput, Pressable, StyleSheet, TouchableOpacity, KeyboardAvoidingView, Image } from 'react-native';
+import Knewave from '../assets/Fonts/Knewave/Knewave-Regular.ttf';
+import { useFonts } from 'expo-font';
 
 const SingUp = ({ navigation }) => {
   const [username, setUsername] = useState('');
   const [password, setPassword] = useState('');
   const [isPassword1Visible, setIsPassword1Visible] = useState(false);
   const [isPassword2Visible, setIsPassword2Visible] = useState(false);
+
+  const [fontsLoaded] = useFonts({
+    Knewave: Knewave        
+  })
+
+  if (!fontsLoaded) {
+      return null; // Handle loading state
+  }
 
 
   const handleLogin = () => {
@@ -23,6 +33,14 @@ const SingUp = ({ navigation }) => {
 
     <View style={styles.container}>
       <View style={styles.headerContainer}>
+        <View style={styles.Logo}>
+          <Image style={{ width: 50, height: 50 }}
+            source={require('../Imgs/done_8476811.png')}
+          />
+          <Text style={styles.Logo_text}>
+              Easy Days
+          </Text>
+        </View>
         <Text style={styles.title}>Welcome Onboard!</Text>
         <Text>Let’s help you keep up with your tasks.</Text>
       </View>
@@ -36,7 +54,7 @@ const SingUp = ({ navigation }) => {
           <View style={styles.passwordEyeContainer}>
             <TextInput
               style={styles.input}
-              placeholder="Enter your full Name . . ."
+              placeholder="Enter your full Name"
               value={username}
               onChangeText={setUsername}
             />
@@ -50,7 +68,7 @@ const SingUp = ({ navigation }) => {
           <View style={styles.passwordEyeContainer}>
             <TextInput
               style={styles.input}
-              placeholder="Enter your email . . ."
+              placeholder="Enter your email"
               value={username}
               onChangeText={setUsername}
             />
@@ -64,7 +82,7 @@ const SingUp = ({ navigation }) => {
           <View style={styles.passwordEyeContainer}>
             <TextInput
               style={styles.input}
-              placeholder="Enter your password . . ."
+              placeholder="Enter your password"
               secureTextEntry={!isPassword1Visible}
               value={password}
               onChangeText={setPassword}
@@ -82,7 +100,7 @@ const SingUp = ({ navigation }) => {
           <View style={styles.passwordEyeContainer}>
             <TextInput
               style={styles.input}
-              placeholder="Re-enter your password . . ."
+              placeholder="Re-enter your password"
               secureTextEntry={!isPassword2Visible}
               value={password}
               onChangeText={setPassword}
@@ -112,9 +130,8 @@ const SingUp = ({ navigation }) => {
 
 const styles = StyleSheet.create({
   container: {
-    width: 280,
     flex: 1,
-    justifyContent: 'center',
+    // justifyContent: 'center',
     alignItems: 'center',
   },
   headerContainer: {
@@ -129,58 +146,83 @@ const styles = StyleSheet.create({
     marginBottom: 5,
 
   },
-  InputsContainer: {
-    width: 310,
+  Logo: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    marginBottom: '5%',
+    marginTop: '5%',
   },
+
+  Logo_text: {
+    fontFamily: 'Knewave',
+    fontSize: 20,
+  },
+
+  InputsContainer: {
+    width: '85%'
+  },
+
   label: {
     fontSize: 15,
     fontWeight: 'bold',
     paddingBottom: 5,
   },
-  InputContainer: {
-    padding: 15,
-  },
+  
   passwordEyeContainer: {
-    backgroundColor: '#F3F3F3',
+    width: '100%',
+    backgroundColor: '#FFF',
     borderRadius: 10,
     flexDirection: 'row',
     alignItems: 'center',
-    justifyContent: 'space-between',
 
   },
   eye: {
-    paddingRight: 10,
+    position: 'absolute',
+    marginLeft: '75%',
   },
   input: {
-    height: 40,
-    width: 230,
-    padding: 10,
+    backgroundColor: '#fff',
+    padding: 15,
+    paddingLeft: 15,
+    borderRadius: 10,
+    fontSize: 16,
+    width: '85%',
 
   },
 
   button: {
-    width: 150,
+    // width: 150,
+    // backgroundColor: '#36C8E2',
+    // borderRadius: 8,
+    // alignItems: 'center',
+    // padding: 10,
+    // marginTop: 50,
+    width: '40%',
+    height: '7%',
     backgroundColor: '#36C8E2',
     borderRadius: 8,
     alignItems: 'center',
     padding: 10,
-    marginTop: 50,
+    margin: 20,
   },
+
   buttonText: {
     color: 'white',
     fontSize: 16,
     fontWeight: 'bold',
   },
+
   linkContainer: {
     padding:10,
     flexDirection: 'row',
     alignItems: 'center',
     justifyContent: 'space-between',
-},
-LinkText: {
-  paddingLeft: 5,
-  color: '#36C8E2',
-}
+  },
+
+  LinkText: {
+    paddingLeft: 5,
+    color: '#36C8E2',
+  }
 });
 
 export default SingUp;
