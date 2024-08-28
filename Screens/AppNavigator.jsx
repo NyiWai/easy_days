@@ -8,6 +8,10 @@ import MaterialIcons from '@expo/vector-icons/MaterialIcons';
 import SignIn from '../Components/SignIn';
 import SignUp from '../Components/SignUp';
 import MainCategories from './MainCategories';
+import FocusMain from '../Components/Focus/FocusMain';
+import MeditationMain from '../Components/Meditation/MeditationMain';
+import ToDoScheduleMain from '../Components/ToDoSchedule/ToDoScheduleMain';
+import CalendarMain from '../Components/Calendar/CalendarMain';
 
 
 const Stack = createStackNavigator();
@@ -51,7 +55,7 @@ const AppNavigator = () => {
                         headerTitle: '',
                         headerStyle: { 
                             shadowColor: 'transparent',
-                            elevation: 0,
+                            elevation: 1,
                         },
                     })}
                 />
@@ -76,6 +80,77 @@ const AppNavigator = () => {
                     component={MainCategories}
                     options={{headerShown: false}}
                 />
+
+                {/* Here start main branchs */}
+
+                <Stack.Screen
+                    name="FocusMain"
+                    component={FocusMain}
+                    options={({ navigation }) => ({
+                        headerLeft: () => (
+                        <TouchableOpacity onPress={() => navigation.goBack()}>
+                            <MaterialIcons name="arrow-back" size={28} color="black" />
+                        </TouchableOpacity>
+                        ),
+                        headerTitle: '',
+                        headerStyle: { 
+                            shadowColor: 'transparent',
+                            elevation: 0,
+                        },
+                    })}
+                />
+
+                <Stack.Screen
+                    name="MeditationMain"
+                    component={MeditationMain}
+                    options={({ navigation }) => ({
+                        headerLeft: () => (
+                        <TouchableOpacity onPress={() => navigation.goBack()}>
+                            <MaterialIcons name="arrow-back" size={28} color="black" />
+                        </TouchableOpacity>
+                        ),
+                        headerTitle: '',
+                        headerStyle: { 
+                            shadowColor: 'transparent',
+                            elevation: 0,
+                        },
+                    })}
+                />
+
+                <Stack.Screen
+                    name="ToDoScheduleMain"
+                    component={ToDoScheduleMain}
+                    options={({ navigation }) => ({
+                        headerLeft: () => (
+                        <TouchableOpacity onPress={() => navigation.goBack()}>
+                            <MaterialIcons name="arrow-back" size={28} color="black" />
+                        </TouchableOpacity>
+                        ),
+                        headerTitle: '',
+                        headerStyle: { 
+                            shadowColor: 'transparent',
+                            elevation: 0,
+                        },
+                    })}
+                />
+
+                <Stack.Screen
+                    name="CalendarMain"
+                    component={CalendarMain}
+                    options={({ navigation }) => ({
+                        headerLeft: () => (
+                        <TouchableOpacity onPress={() => navigation.goBack()}>
+                            <MaterialIcons name="arrow-back" size={28} color="black" />
+                        </TouchableOpacity>
+                        ),
+                        headerTitle: '',
+                        headerStyle: { 
+                            shadowColor: 'transparent',
+                            elevation: 0,
+                        },
+                    })}
+                />
+
             </Stack.Navigator>
         </NavigationContainer>
     )

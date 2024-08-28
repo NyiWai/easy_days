@@ -1,12 +1,12 @@
 import React, {useState} from 'react'
-import { StyleSheet, View, Text, Image } from 'react-native'
+import { StyleSheet, View, Text, Image, TouchableOpacity } from 'react-native'
 import { useFonts } from 'expo-font';
 import Knewave from '../assets/Fonts/Knewave/Knewave-Regular.ttf';
 import profileIcon from '../Imgs/user_1077114.png'
 // import * as ImagePicker from 'expo-image-picker'
 
 
-const MainCategories = () => {
+const MainCategories = ({navigation}) => {
   const [imageUri, setImageUri] = useState(null)
 
 
@@ -62,7 +62,56 @@ const MainCategories = () => {
                 </Text>
             </View>
         </View>
+
+
         <View>
+          <Text style={{marginTop: '10%',}}>
+            Lorem ipsum dolor sit amet consectetur. In libero dolor fames nunc vitae quam ornare fermentum. 
+          </Text>
+        </View>
+
+
+        <View style={styles.MainBox}>
+
+          <View style={styles.TwoPairBox}>
+                {/* Box 1: Focus */}
+            <TouchableOpacity
+              style={styles.box}
+              onPress={() => navigation.navigate('FocusMain')}
+            >
+              <Image source={require('../Imgs/Exams-bro.png')} style={styles.image} />
+              <Text style={styles.boxText}>Focus</Text>
+            </TouchableOpacity>
+
+            {/* Box 2: Meditation */}
+            <TouchableOpacity
+              style={styles.box}
+              onPress={() => navigation.navigate('MeditationMain')}
+            >
+              <Image source={require('../Imgs/Peace of mind-rafiki.png')} style={styles.image} />
+              <Text style={styles.boxText}>Meditation</Text>
+            </TouchableOpacity>
+          </View>
+
+          <View style={styles.TwoPairBox}>
+              {/* Box 3: To do schedule */}
+            <TouchableOpacity
+              style={styles.box}
+              onPress={() => navigation.navigate('ToDoScheduleMain')}
+            >
+              <Image source={require('../Imgs/undraw_Accept_tasks_re_09mv.png')} style={styles.image} />
+              <Text style={styles.boxText}>To do schedule</Text>
+            </TouchableOpacity>
+
+            {/* Box 4: Calendar */}
+            <TouchableOpacity
+              style={styles.box}
+              onPress={() => navigation.navigate('CalendarMain')}
+            >
+              <Image source={require('../Imgs/calendar.png')} style={styles.image} />
+              <Text style={styles.boxText}>Calendar</Text>
+            </TouchableOpacity>
+          </View>
 
         </View>
     </View>
@@ -104,6 +153,39 @@ const styles = StyleSheet.create({
         fontFamily: 'Knewave',
         fontSize: 20,
         marginRight: '20%',
-    }   
+    },
+    MainBox: { 
+      flex: 1,
+      flexWrap: 'wrap', 
+      justifyContent: 'space-around',
+      marginVertical:'25%',
+    },
+    box: { 
+      width: '45%', 
+      padding: 20, 
+      marginVertical: 10, 
+      alignItems: 'center', 
+      borderWidth: 1, 
+      borderColor: '#ddd', 
+      borderRadius: 10, 
+      margin: 5,
+    },
+    image: { 
+      width: 120, 
+      height: 100, 
+      marginBottom: 10 
+    },
 
+    boxText:{
+      fontSize: 13,
+      width: '100%',
+      
+    },
+
+    TwoPairBox: {
+      flex: 1,
+      flexDirection: 'row', 
+      flexWrap: 'wrap', 
+      justifyContent: 'space-around'
+    }
 })
