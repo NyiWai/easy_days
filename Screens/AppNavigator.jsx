@@ -86,20 +86,12 @@ const AppNavigator = () => {
                 <Stack.Screen
                     name="FocusMain"
                     component={FocusMain}
-                    options={({ navigation }) => ({
-                        headerLeft: () => (
-                        <TouchableOpacity onPress={() => navigation.goBack()}>
-                            <MaterialIcons name="arrow-back" size={28} color="black" />
-                        </TouchableOpacity>
-                        ),
-                        headerTitle: '',
-                        headerStyle: { 
-                            shadowColor: 'transparent',
-                            elevation: 0,
-                        },
-                    })}
+                    options={{
+                        headerShown: false, 
+                      }}
                 />
-
+                
+                {/* Meditation */}
                 <Stack.Screen
                     name="MeditationMain"
                     component={MeditationMain}
