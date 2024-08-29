@@ -182,7 +182,7 @@ const styles = StyleSheet.create({
   },
   input: {
     backgroundColor: '#fff',
-    padding: 15,
+    padding: 10,
     paddingLeft: 15,
     borderRadius: 10,
     fontSize: 16,
@@ -203,7 +203,7 @@ const styles = StyleSheet.create({
     borderRadius: 8,
     alignItems: 'center',
     padding: 10,
-    margin: 20,
+    marginTop:40,
   },
 
   buttonText: {

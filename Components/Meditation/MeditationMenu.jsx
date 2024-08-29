@@ -1,20 +1,19 @@
 import React, { Component } from 'react'
 import { TouchableOpacity, StyleSheet,View, Text, Image } from 'react-native'
-import MeditationMenu from './MeditationMenu'
 
-const Meditation = ({navigation}) => {
+const MeditationMenu = ({navigation}) => {
   return (
     <>
         <View style={styles.container}>
+        
             <View style={styles.Bg}>
-                <Image source={require('../../Imgs/Mindfulness-bro.png')}/>
+                <Image source={require('../../Imgs/strelxzitzia-plant-bro.png')}/>
             </View>
-
             <TouchableOpacity 
                 style={styles.button}
-                onPress={() => navigation.navigate('MeditationMenu')}
+                onPress={() => navigation.navigate('MainCategories')}
                 >
-                <Text style={styles.buttonText}>Get Started</Text>
+                    <Text style={styles.buttonText}>MainCate</Text>
               </TouchableOpacity>
         </View>
     </>
@@ -23,24 +22,12 @@ const Meditation = ({navigation}) => {
 
 const styles = StyleSheet.create({
 
-  Logo_text: {
-    fontFamily: 'Knewave',
-    fontSize: 24,
-    marginBottom: '10%',
-  },
   container: {
     flex: 1,
     backgroundColor: '#fff',
     alignItems: 'center',
     // justifyContent: 'center',
   },
-  buttonContainer:{
-    flexDirection: 'row',
-    justifyContent: 'space-between',
-    width: '70%',
-    marginTop: '10%'
-  },
-
   button:{
     alignItems: 'center',
     justifyContent: 'center',
@@ -57,4 +44,4 @@ const styles = StyleSheet.create({
   }
 });
 
-export default Meditation
+export default MeditationMenu
