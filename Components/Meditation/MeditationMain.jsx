@@ -15,7 +15,7 @@ const Meditation = ({navigation}) => {
                 onPress={() => navigation.navigate('MeditationMenu')}
                 >
                 <Text style={styles.buttonText}>Get Started</Text>
-              </TouchableOpacity>
+            </TouchableOpacity>
         </View>
     </>
   )
@@ -48,7 +48,7 @@ const styles = StyleSheet.create({
     paddingHorizontal: 32,
     borderRadius: 4,
     elevation: 3,
-    backgroundColor: '#19C0DE',
+    backgroundColor: '#92E3A9',
     marginTop: 20
   },
   buttonText:{
