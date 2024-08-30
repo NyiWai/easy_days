@@ -10,6 +10,7 @@ import SignUp from '../Components/SignUp';
 import MainCategories from './MainCategories';
 import FocusMain from '../Components/Focus/FocusMain';
 import MeditationMain from '../Components/Meditation/MeditationMain';
+import MeditationMenu from '../Components/Meditation/MeditationMenu';
 import ToDoScheduleMain from '../Components/ToDoSchedule/ToDoScheduleMain';
 import CalendarMain from '../Components/Calendar/CalendarMain';
 
@@ -20,8 +21,8 @@ const AppNavigator = () => {
     return (
         <NavigationContainer>
             <Stack.Navigator>
-                <Stack.Screen name="Welcome" component={Welcome} options={{headerShown: false}}/>
-                
+                <Stack.Screen name="Welcome" component={Welcome} options={{ headerShown: false }} />
+
                 {/* <Stack.Screen 
                     name="AfterWelcome"
                     component={AfterWelcome}
@@ -31,16 +32,16 @@ const AppNavigator = () => {
                     name="AfterWelcome"
                     component={AfterWelcome}
                     options={({ navigation }) => ({
-                    headerLeft: () => (
-                    <TouchableOpacity onPress={() => navigation.goBack()}>
-                        <MaterialIcons name="arrow-back" size={28} color="black" />
-                    </TouchableOpacity>
-                    ),
-                    headerTitle: '',
-                    headerStyle: { 
-                        shadowColor: 'transparent',
-                        elevation: 0,
-                    },
+                        headerLeft: () => (
+                        <TouchableOpacity style={{marginStart:15 }} onPress={() => navigation.goBack()}>
+                                <MaterialIcons name="arrow-back" size={28} color="black" />
+                            </TouchableOpacity>
+                        ),
+                        headerTitle: '',
+                        headerStyle: {
+                            shadowColor: 'transparent',
+                            elevation: 0,
+                        },
                     })}
                 />
                 <Stack.Screen
@@ -48,12 +49,12 @@ const AppNavigator = () => {
                     component={SignIn}
                     options={({ navigation }) => ({
                         headerLeft: () => (
-                        <TouchableOpacity onPress={() => navigation.goBack()}>
-                            <MaterialIcons name="arrow-back" size={28} color="black" />
-                        </TouchableOpacity>
+                            <TouchableOpacity style={{marginStart:15 }}  onPress={() => navigation.goBack()}>
+                                <MaterialIcons name="arrow-back" size={28} color="black" />
+                            </TouchableOpacity>
                         ),
                         headerTitle: '',
-                        headerStyle: { 
+                        headerStyle: {
                             shadowColor: 'transparent',
                             elevation: 1,
                         },
@@ -64,21 +65,21 @@ const AppNavigator = () => {
                     component={SignUp}
                     options={({ navigation }) => ({
                         headerLeft: () => (
-                        <TouchableOpacity onPress={() => navigation.goBack()}>
-                            <MaterialIcons name="arrow-back" size={28} color="black" />
-                        </TouchableOpacity>
+                            <TouchableOpacity style={{marginStart:15 }}  onPress={() => navigation.goBack()}>
+                                <MaterialIcons name="arrow-back" size={28} color="black" />
+                            </TouchableOpacity>
                         ),
                         headerTitle: '',
-                        headerStyle: { 
+                        headerStyle: {
                             shadowColor: 'transparent',
                             elevation: 0,
                         },
                     })}
                 />
-                <Stack.Screen 
+                <Stack.Screen
                     name="MainCategories"
                     component={MainCategories}
-                    options={{headerShown: false}}
+                    options={{ headerShown: false }}
                 />
 
                 {/* Here start main branchs */}
@@ -87,22 +88,40 @@ const AppNavigator = () => {
                     name="FocusMain"
                     component={FocusMain}
                     options={{
-                        headerShown: false, 
-                      }}
+                        headerShown: false,
+                    }}
                 />
-                
+
+                {/* ............Meditation Sectio............  */}
                 {/* Meditation */}
                 <Stack.Screen
                     name="MeditationMain"
                     component={MeditationMain}
                     options={({ navigation }) => ({
                         headerLeft: () => (
-                        <TouchableOpacity onPress={() => navigation.goBack()}>
-                            <MaterialIcons name="arrow-back" size={28} color="black" />
-                        </TouchableOpacity>
+                            <TouchableOpacity style={{marginStart:15 }}  onPress={() => navigation.goBack()}>
+                                <MaterialIcons name="arrow-back" size={28} color="black" />
+                            </TouchableOpacity>
                         ),
                         headerTitle: '',
-                        headerStyle: { 
+                        headerStyle: {
+                            shadowColor: 'transparent',
+                            elevation: 0,
+                        },
+                    })}
+                />
+
+                <Stack.Screen
+                    name="MeditationMenu"
+                    component={MeditationMenu}
+                    options={({ navigation }) => ({
+                        headerLeft: () => (
+                            <TouchableOpacity style={{marginStart:15 }}  onPress={() => navigation.goBack()}>
+                                <MaterialIcons name="arrow-back" size={28} color="black" />
+                            </TouchableOpacity>
+                        ),
+                        headerTitle: '',
+                        headerStyle: {
                             shadowColor: 'transparent',
                             elevation: 0,
                         },
@@ -114,12 +133,12 @@ const AppNavigator = () => {
                     component={ToDoScheduleMain}
                     options={({ navigation }) => ({
                         headerLeft: () => (
-                        <TouchableOpacity onPress={() => navigation.goBack()}>
-                            <MaterialIcons name="arrow-back" size={28} color="black" />
-                        </TouchableOpacity>
+                            <TouchableOpacity style={{marginStart:15 }}  onPress={() => navigation.goBack()}>
+                                <MaterialIcons name="arrow-back" size={28} color="black" />
+                            </TouchableOpacity>
                         ),
                         headerTitle: '',
-                        headerStyle: { 
+                        headerStyle: {
                             shadowColor: 'transparent',
                             elevation: 0,
                         },
@@ -131,12 +150,12 @@ const AppNavigator = () => {
                     component={CalendarMain}
                     options={({ navigation }) => ({
                         headerLeft: () => (
-                        <TouchableOpacity onPress={() => navigation.goBack()}>
-                            <MaterialIcons name="arrow-back" size={28} color="black" />
-                        </TouchableOpacity>
+                            <TouchableOpacity style={{marginStart:15 }}  onPress={() => navigation.goBack()}>
+                                <MaterialIcons name="arrow-back" size={28} color="black" />
+                            </TouchableOpacity>
                         ),
                         headerTitle: '',
-                        headerStyle: { 
+                        headerStyle: {
                             shadowColor: 'transparent',
                             elevation: 0,
                         },
