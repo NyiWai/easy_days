@@ -1,76 +1,69 @@
-import React, { Component } from 'react'
+import React, { Component,useState } from 'react'
 import { TouchableOpacity,ScrollView, StyleSheet,View, Text, Image } from 'react-native'
+import categoriesData from './categoriesData'
+// import songsData from './categoriesData'
+// import categoriesImage from '../../Imgs/trackCategories/cate1.jpg'
+
 
 const MeditationMenu = ({navigation}) => {
+  const [selectedCategory, setSelectedCategory] = useState('all');
+  const handleCategoryClick = (category) => {setSelectedCategory(category);};
+
+  // const filteredSongs = selectedCategory ? songsData.filter((song) => song.category === selectedCategory ): songsData;
+
+  const handleSongPress = (song) => {
+    // Handle song press actions here
+    console.log('Song pressed:', song);
+  };
+
   return (
     <>
         <View style={styles.container}>
             <Image style={styles.ScreenImage} source={require('../../Imgs/strelxzitzia-plant-bro.png')}/>
             <View style={styles.bottomContainer}>
-              <Image style={styles.bgImage} source={require('../../Imgs/active-woman-with-tablet-learning-online.png')}/>
+              {/* <Image style={styles.bgImage} source={require('../../Imgs/active-woman-with-tablet-learning-online.png')}/> */}
 
               <View style={styles.bottomSubContainer}>
                 <Text style={styles.categorieTitle} >Categories</Text>
+
+      {/* -----------Display all categories ---------- */}
                 <ScrollView horizontal={true} 
                 showsHorizontalScrollIndicator={false}
                 style={styles.categoriesContainer}>
-                    <TouchableOpacity style={styles.categorie} 
-                      onPress={() => navigation.navigate('MeditationMenu')}
+                    <TouchableOpacity
+                      style={styles.categorie} 
+                      onPress={() => handleCategoryClick('all')}
                       >
-                      <Text style={styles.categorieText}>Orbit</Text>
-                      <Image style={styles.categorieImage} source={require('../../Imgs/trackCategories/cate4.jpg')}/>
+                      <Text style={styles.categorieText}>All</Text>
+                      <Image style={styles.categorieImage} source={require('../../Imgs/active-woman-with-tablet-learning-online.png')}/>
                     </TouchableOpacity>
-                    <TouchableOpacity style={styles.categorie} 
-                      onPress={() => navigation.navigate('MeditationMenu')}
+
+                    {/* <TouchableOpacity
+                      key={category.id}
+                      style={styles.categorie} 
+                      onPress={() => handleCategoryClick(category.name)}
                       >
-                      <Text style={styles.categorieText}>Orbit</Text>
-                      <Image style={styles.categorieImage} source={require('../../Imgs/trackCategories/cate4.jpg')}/>
+                      <Text style={styles.categorieText}>{category.name}</Text>
+                      <Img key={category.id} src={category.cateImage} alt={category.alt} />
+                      <Image style={styles.categorieImage} source={category.cateImage}/>
                     </TouchableOpacity>
-                    <TouchableOpacity style={styles.categorie} 
-                      onPress={() => navigation.navigate('MeditationMenu')}
-                      >
-                      <Text style={styles.categorieText}>Orbit</Text>
-                      <Image style={styles.categorieImage} source={require('../../Imgs/trackCategories/cate4.jpg')}/>
-                    </TouchableOpacity>
-                    <TouchableOpacity style={styles.categorie} 
-                      onPress={() => navigation.navigate('MeditationMenu')}
-                      >
-                      <Text style={styles.categorieText}>Orbit</Text>
-                      <Image style={styles.categorieImage} source={require('../../Imgs/trackCategories/cate4.jpg')}/>
-                    </TouchableOpacity>
-                    <TouchableOpacity style={styles.categorie} 
-                      onPress={() => navigation.navigate('MeditationMenu')}
-                      >
-                      <Text style={styles.categorieText}>Orbit</Text>
-                      <Image style={styles.categorieImage} source={require('../../Imgs/trackCategories/cate4.jpg')}/>
-                    </TouchableOpacity>
+                   */}
                 </ScrollView >
-                <ScrollView style={styles.trackContainer}>
-                  <View style={styles.track}>
-                  </View>
-                  <View style={styles.track}>
-                  </View>
-                  <View style={styles.track}>
-                  </View>
-                  <View style={styles.track}>
-                  </View>
-                  <View style={styles.track}>
-                  </View>
-                  <View style={styles.track}>
-                  </View>
-                  <View style={styles.track}>
-                  </View>
-                  <View style={styles.track}>
-                  </View>
-                  <View style={styles.track}>
-                  </View>
-                  <View style={styles.track}>
-                  </View>
-                  <View style={styles.track}>
-                  </View>
-                  <View style={styles.track}>
-                  </View>
-                </ScrollView>
+
+        {/* -----------Display all song---------- */}
+                {/* <ScrollView style={styles.trackContainer}>   
+                  {filteredSongs.map((song) =>(
+                    console.log(song),
+                    <TouchableOpacity
+                      key={song.id}
+                      style={styles.track} 
+                      onPress={() => handleSongPress(song)}
+                      >
+                      <Text>{song.title}</Text>
+                      <Image source={require(song.Image)}/>
+                    </TouchableOpacity>
+                  ))}
+                </ScrollView> */}
               </View>
             </View>
                 
@@ -116,13 +109,13 @@ const styles = StyleSheet.create({
   },
   categorie:{
     margin:5,
+    borderWidth:1,
     borderRadius:6,
   },
   categorieImage:{
-    position: 'static',
+    // position: 'static',
     width:140,
-    // height:100,
-    resizeMode: 'contain',
+    height:100,
   },
   categorieText:{
     position: 'absolute',

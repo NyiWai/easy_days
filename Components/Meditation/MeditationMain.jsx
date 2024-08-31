@@ -2,7 +2,7 @@ import React, { Component } from 'react'
 import { TouchableOpacity, StyleSheet,View, Text, Image } from 'react-native'
 import MeditationMenu from './MeditationMenu'
 
-const Meditation = ({navigation}) => {
+const MeditationMain = ({navigation}) => {
   return (
     <>
         <View style={styles.container}>
@@ -57,4 +57,4 @@ const styles = StyleSheet.create({
   }
 });
 
-export default Meditation
+export default MeditationMain

@@ -9,6 +9,7 @@ import SignIn from '../Components/SignIn';
 import SignUp from '../Components/SignUp';
 import MainCategories from './MainCategories';
 import FocusMain from '../Components/Focus/FocusMain';
+import MeditationWelcome from '../Components/Meditation/MeditationWelcome';
 import MeditationMain from '../Components/Meditation/MeditationMain';
 import MeditationMenu from '../Components/Meditation/MeditationMenu';
 import ToDoScheduleMain from '../Components/ToDoSchedule/ToDoScheduleMain';
@@ -92,11 +93,11 @@ const AppNavigator = () => {
                     }}
                 />
 
-                {/* ............Meditation Sectio............  */}
+                {/* ............Meditation Section............  */}
                 {/* Meditation */}
                 <Stack.Screen
-                    name="MeditationMain"
-                    component={MeditationMain}
+                    name="MeditationWelcome"
+                    component={MeditationWelcome}
                     options={({ navigation }) => ({
                         headerLeft: () => (
                             <TouchableOpacity style={{marginStart:15 }}  onPress={() => navigation.goBack()}>
@@ -114,6 +115,23 @@ const AppNavigator = () => {
                 <Stack.Screen
                     name="MeditationMenu"
                     component={MeditationMenu}
+                    options={({ navigation }) => ({
+                        headerLeft: () => (
+                            <TouchableOpacity style={{marginStart:15 }}  onPress={() => navigation.goBack()}>
+                                <MaterialIcons name="arrow-back" size={28} color="black" />
+                            </TouchableOpacity>
+                        ),
+                        headerTitle: '',
+                        headerStyle: {
+                            shadowColor: 'transparent',
+                            elevation: 0,
+                        },
+                    })}
+                />
+                
+                <Stack.Screen
+                    name="MeditationMain"
+                    component={MeditationMain}
                     options={({ navigation }) => ({
                         headerLeft: () => (
                             <TouchableOpacity style={{marginStart:15 }}  onPress={() => navigation.goBack()}>
