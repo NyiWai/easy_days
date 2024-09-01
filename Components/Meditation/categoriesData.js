@@ -4,12 +4,10 @@ import cateImage3 from '../../Imgs/trackCategories/cate3.jpg';
 import cateImage4 from '../../Imgs/trackCategories/cate4.jpg';
 import cateImage5 from '../../Imgs/trackCategories/cate5.jpg';
 
-import song1 from'../../mediationMusic/song1.mp3'
-import song2 from'../../mediationMusic/song2.mp3'
-import song3 from'../../mediationMusic/song3.mp3'
-import song4 from'../../mediationMusic/song4.mp3'
-
-
+const song1 = require('./meditationMusic/song1.mp3');
+const song2 = require('./meditationMusic/song2.mp3');
+const song3 = require('./meditationMusic/song3.mp3');
+const song4 = require('./meditationMusic/song4.mp3');
 
 
 export const categoriesData =[
