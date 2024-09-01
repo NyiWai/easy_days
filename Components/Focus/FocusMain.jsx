@@ -54,248 +54,516 @@ const createArray = (length) => {
 const AVAILABLE_MINUTES = createArray(60);
 const AVAILABLE_SECONDS = createArray(60);
 
+// export default class App extends Component {
+//     state = {
+//       remainingSeconds: 5,
+//       isRunning: false,
+//       isBreak: false,
+//       isPaused: false,
+//       isPausedBreak: false,
+//       selectedMinutes: "0",
+//       selectedSeconds: "0",
+//       breakMinutes: 0,
+//       breakSeconds: 5,
+//       checkSkip: false,
+//       sound: null,
+//     };
+    
+//     interval = null;
+    
+//     async componentDidMount() {
+//       const { sound } = await Audio.Sound.createAsync(
+//         require("../../assets/Sounds/CLOCK TICKING SILENCE AMBIENCE.mp3"),
+//         { shouldPlay: false, isLooping: true }
+//       );
+//       this.setState({ sound });
+//     }
+    
+//     componentWillUnmount() {
+//       if (this.state.sound) {
+//         this.state.sound.stopAsync();
+//         this.state.sound.unloadAsync();
+//       }
+//       if (this.interval) {
+//         clearInterval(this.interval);
+//       }
+//     }
+    
+//     componentDidUpdate = async (prevProp, prevState) => {
+//       if (this.state.remainingSeconds === 0 && prevState.remainingSeconds !== 0) {
+//         this.stop();
+    
+//         // Toggle between focus and break sessions
+//         if (this.state.isBreak) {
+//           this.setState({ isBreak: false });
+//           await this.stopSound();
+//           this.resetSession(); // Reset to beginning after break
+//         } else {
+//           this.setState({ isBreak: true, isRunning: true });
+//           this.startBreakSession();
+//         }
+//       }
+//     };
+    
+//     startFocusSession = async () => {
+//       const { selectedMinutes, selectedSeconds } = this.state;
+//       const remainingSeconds =
+//         parseInt(selectedMinutes, 10) * 60 + parseInt(selectedSeconds, 10);
+//       this.setState({ remainingSeconds, isRunning: true, isPaused: false, isBreak: false });
+//       await this.playSound();
+//       this.startTimer();
+//     };
+    
+//     startBreakSession = async () => {
+//       const { breakMinutes, breakSeconds } = this.state;
+//       const remainingSeconds = breakMinutes * 60 + breakSeconds;
+//       this.setState({ remainingSeconds, isRunning: true, isPaused: false, isBreak: true });
+//       await this.playSound();
+//       this.startTimer();
+//     };
+    
+//     startTimer = () => {
+//       if (this.interval) clearInterval(this.interval); // Clear existing interval
+//       this.interval = setInterval(() => {
+//         this.setState((state) => ({
+//           remainingSeconds: state.remainingSeconds - 1,
+//         }));
+//       }, 1000);
+//     };
+    
+//     playSound = async () => {
+//       if (this.state.sound) {
+//         await this.state.sound.setIsLoopingAsync(true);
+//         await this.state.sound.playAsync();
+//       }
+//     };
+    
+//     stopSound = async () => {
+//       if (this.state.sound) {
+//         await this.state.sound.stopAsync();
+//       }
+//     };
+    
+//     pause = async () => {
+//       clearInterval(this.interval);
+//       this.interval = null;
+//       this.setState({ isPaused: true, });
+//       if (this.state.sound) {
+//         await this.state.sound.pauseAsync();
+//       }
+//     };
+    
+//     resume = async () => {
+//       this.setState({ isPaused: false, isRunning: true });
+//       this.startTimer();
+//       if (this.state.sound) {
+//         await this.state.sound.playAsync();
+//       }
+//     };
+
+//     pauseBreak = async () => {
+//       clearInterval(this.interval);
+//       this.interval = null;
+//       this.setState({ isPausedBreak: true, });
+//       if (this.state.sound) {
+//         await this.state.sound.pauseAsync();
+//       }
+//     };
+
+//     resumeBreak = async () => {
+//       this.setState({ isPausedBreak: false });
+//       this.startTimer();
+//       if (this.state.sound) {
+//         await this.state.sound.playAsync();
+//       }
+//     };
+    
+//     stop = async () => {
+//       clearInterval(this.interval);
+//       this.interval = null;
+//       await this.stopSound();
+//       this.setState({
+//         isRunning: false,
+//         isPaused: false,
+//       });
+//     };
+    
+//     skip = async () => {
+//       clearInterval(this.interval);
+//       this.interval = null;
+//       this.stop();
+//       this.startBreakSession();
+//       this.setState({ checkSkip: true });
+//     };
+    
+//     skipBreak = async () => {
+//       clearInterval(this.interval);
+//       this.interval = null;
+//       await this.stop();
+//       this.resetSession();
+//     };
+    
+//     resetSession = () => {
+//       this.setState({
+//         isRunning: false,
+//         isBreak: false,
+//         isPaused: false,
+//         selectedMinutes: "0",
+//         selectedSeconds: "0",
+//         breakMinutes: 5,
+//         breakSeconds: 0,
+//         checkSkip: false,
+//       });
+//     };
+    
+
+//     renderPickers = () => (
+//       <View style={styles.pickerContainer}>
+
+//         <View style={{flexDirection: 'row', width: '70%',justifyContent: 'space-between', alignItems: 'center'}}>
+//           <Text style={styles.pickerLabel}>minutes</Text>
+//           <Text style={styles.pickerLabel}>seconds</Text>
+//         </View>
+
+//         <View style={{flexDirection: 'row', width: '85%',justifyContent: 'space-between', alignItems: 'center', marginVertical: 20}}>
+//           <View style={styles.pickerWrapper}>
+
+//             <Picker
+//               style={styles.picker}
+//               itemStyle={styles.pickerItem}
+//               selectedValue={this.state.selectedMinutes}
+//               onValueChange={(itemValue) => {
+//                 this.setState({ selectedMinutes: itemValue });
+//               }}
+//               mode="dropdown"
+//             >
+//               {AVAILABLE_MINUTES.map((value) => (
+//                 <Picker.Item key={value} label={value} value={value} />
+//               ))}
+//             </Picker>
+
+//           </View>
+
+
+//           <View style={styles.pickerWrapper}>
+//             <Picker
+//               style={styles.picker}
+//               itemStyle={styles.pickerItem}
+//               selectedValue={this.state.selectedSeconds}
+//               onValueChange={(itemValue) => {
+//                 this.setState({ selectedSeconds: itemValue });
+//               }}
+//               mode="dropdown"
+//             >
+//               {AVAILABLE_SECONDS.map((value) => (
+//                 <Picker.Item key={value} label={value} value={value} />
+//               ))}
+//             </Picker>
+
+//           </View>   
+//         </View>
+//       </View>
+//     );
+    
+
+//     render() {
+//       const { minutes, seconds } = getRemaining(this.state.remainingSeconds);
+//       const { isBreak, isRunning, isPaused, checkSkip } = this.state;
+    
+//       const imageSource = isBreak ? require("../../Imgs/undraw_Chilling_re_4iq9.png") : require("../../Imgs/Book lover-bro.png");
+//       const descriptionText = isBreak ? "Freely get rest" : "Don't lose your focus";
+    
+//       return (
+//         <View style={styles.container}>
+//           <StatusBar barStyle="dark-content" />
+//           <View style={styles.innerContainer}>
+
+//             <Image source={imageSource} style={styles.illustration} />
+
+//             {isRunning || isBreak ? (
+//               <Text style={styles.timerText}>{`${minutes}:${seconds}`}</Text>
+//             ) : (
+//               this.renderPickers()
+//             )}
+//             <Text style={styles.descriptionText}>{descriptionText}</Text>
+
+//             {isRunning && !isPaused ? (
+//               <TouchableOpacity onPress={this.pause} style={[styles.button, styles.buttonPause]}>
+//                 <FontAwesome5 name="pause" size={24} color="black" />
+//               </TouchableOpacity>
+//             ) : (
+//               <TouchableOpacity
+//                 onPress={isPaused ? this.resume : this.startFocusSession}
+//                 style={styles.button}
+//               >
+//                 <AntDesign name="caretright" size={35} color="black" />
+//               </TouchableOpacity>
+//             )}
+//             <View style={styles.buttonsContainer}>
+//               {checkSkip ? (
+//                 <TouchableOpacity style={styles.smallButton} onPress={this.skipBreak}>
+//                   <Text style={styles.smallButtonText}>skip</Text>
+//                 </TouchableOpacity>
+//               ) : (
+//                 <TouchableOpacity style={styles.smallButton} onPress={this.skip}>
+//                   <Text style={styles.smallButtonText}>skip</Text>
+//                 </TouchableOpacity>
+//               )}
+//             </View>
+//           </View>
+//         </View>
+//       );
+//     }
+// }
+
 export default class App extends Component {
-    state = {
-      remainingSeconds: 5,
+  state = {
+    remainingSeconds: 5,
+    isRunning: false,
+    isBreak: false,
+    isPaused: false,
+    selectedMinutes: "0",
+    selectedSeconds: "0",
+    breakMinutes: 5,
+    breakSeconds: 0,
+    checkSkip: false,
+    sound: null,
+  };
+
+  interval = null;
+
+  async componentDidMount() {
+    const { sound } = await Audio.Sound.createAsync(
+      require("../../assets/Sounds/CLOCK TICKING SILENCE AMBIENCE.mp3"),
+      { shouldPlay: false, isLooping: true }
+    );
+    this.setState({ sound });
+  }
+
+  componentWillUnmount() {
+    if (this.state.sound) {
+      this.state.sound.stopAsync();
+      this.state.sound.unloadAsync();
+    }
+    if (this.interval) {
+      clearInterval(this.interval);
+    }
+  }
+
+  componentDidUpdate = async (prevProp, prevState) => {
+    if (this.state.remainingSeconds === 0 && prevState.remainingSeconds !== 0) {
+      this.stop();
+
+      // Toggle between focus and break sessions
+      if (this.state.isBreak) {
+        this.setState({ isBreak: false });
+        await this.stopSound();
+        this.resetSession(); // Reset to beginning after break
+      } else {
+        this.setState({ isBreak: true, isRunning: true });
+        this.startBreakSession();
+      }
+    }
+  };
+
+  startFocusSession = async () => {
+    const { selectedMinutes, selectedSeconds } = this.state;
+    const remainingSeconds =
+      parseInt(selectedMinutes, 10) * 60 + parseInt(selectedSeconds, 10);
+    
+    if (selectedMinutes > 0 || selectedSeconds > 0){
+      this.setState({ remainingSeconds, isRunning: true, isPaused: false, isBreak: false });
+      await this.playSound();
+      this.startTimer();
+    }
+
+    
+  };
+
+  startBreakSession = async () => {
+    const { breakMinutes, breakSeconds } = this.state;
+    const remainingSeconds = breakMinutes * 60 + breakSeconds;
+    this.setState({ remainingSeconds, isRunning: true, isPaused: false, isBreak: true });
+    await this.playSound();
+    this.startTimer();
+  };
+
+  startTimer = () => {
+    if (this.interval) clearInterval(this.interval); // Clear existing interval
+    this.interval = setInterval(() => {
+      this.setState((state) => ({
+        remainingSeconds: state.remainingSeconds - 1,
+      }));
+    }, 1000);
+  };
+
+  playSound = async () => {
+    if (this.state.sound) {
+      await this.state.sound.setIsLoopingAsync(true);
+      await this.state.sound.playAsync();
+    }
+  };
+
+  stopSound = async () => {
+    if (this.state.sound) {
+      await this.state.sound.stopAsync();
+    }
+  };
+
+  pause = async () => {
+    clearInterval(this.interval);
+    this.interval = null;
+    this.setState({ isPaused: true });
+    if (this.state.sound) {
+      await this.state.sound.pauseAsync();
+    }
+  };
+
+  resume = async () => {
+    this.setState({ isPaused: false, isRunning: true });
+    this.startTimer();
+    if (this.state.sound) {
+      await this.state.sound.playAsync();
+    }
+  };
+
+  stop = async () => {
+    clearInterval(this.interval);
+    this.interval = null;
+    await this.stopSound();
+    this.setState({
+      isRunning: false,
+      isPaused: false,
+    });
+  };
+
+  skip = async () => {
+    clearInterval(this.interval);
+    this.interval = null;
+    this.stop();
+    this.startBreakSession();
+    this.setState({ checkSkip: true });
+  };
+
+  skipBreak = async () => {
+    clearInterval(this.interval);
+    this.interval = null;
+    await this.stop();
+    this.resetSession();
+  };
+
+  resetSession = () => {
+    this.setState({
       isRunning: false,
       isBreak: false,
       isPaused: false,
       selectedMinutes: "0",
       selectedSeconds: "0",
-      breakMinutes: 0,
-      breakSeconds: 5,
+      breakMinutes: 5,
+      breakSeconds: 0,
       checkSkip: false,
-      sound: null,
-    };
-    
-    interval = null;
-    
-    async componentDidMount() {
-      const { sound } = await Audio.Sound.createAsync(
-        require("../../assets/Sounds/CLOCK TICKING SILENCE AMBIENCE.mp3"),
-        { shouldPlay: false, isLooping: true }
-      );
-      this.setState({ sound });
-    }
-    
-    componentWillUnmount() {
-      if (this.state.sound) {
-        this.state.sound.stopAsync();
-        this.state.sound.unloadAsync();
-      }
-      if (this.interval) {
-        clearInterval(this.interval);
-      }
-    }
-    
-    componentDidUpdate = async (prevProp, prevState) => {
-      if (this.state.remainingSeconds === 0 && prevState.remainingSeconds !== 0) {
-        this.stop();
-    
-        // Toggle between focus and break sessions
-        if (this.state.isBreak) {
-          this.setState({ isBreak: false });
-          await this.stopSound();
-          this.resetSession(); // Reset to beginning after break
-        } else {
-          this.setState({ isBreak: true });
-          this.startBreakSession();
-        }
-      }
-    };
-    
-    startFocusSession = async () => {
-      const { selectedMinutes, selectedSeconds } = this.state;
-      const remainingSeconds =
-        parseInt(selectedMinutes, 10) * 60 + parseInt(selectedSeconds, 10);
-      this.setState({ remainingSeconds, isRunning: true, isPaused: false, isBreak: false });
-      await this.playSound();
-      this.startTimer();
-    };
-    
-    startBreakSession = async () => {
-      const { breakMinutes, breakSeconds } = this.state;
-      const remainingSeconds = breakMinutes * 60 + breakSeconds;
-      this.setState({ remainingSeconds, isRunning: true, isPaused: false, isBreak: true });
-      await this.playSound();
-      this.startTimer();
-    };
-    
-    startTimer = () => {
-      if (this.interval) clearInterval(this.interval); // Clear existing interval
-      this.interval = setInterval(() => {
-        this.setState((state) => ({
-          remainingSeconds: state.remainingSeconds - 1,
-        }));
-      }, 1000);
-    };
-    
-    playSound = async () => {
-      if (this.state.sound) {
-        await this.state.sound.setIsLoopingAsync(true);
-        await this.state.sound.playAsync();
-      }
-    };
-    
-    stopSound = async () => {
-      if (this.state.sound) {
-        await this.state.sound.stopAsync();
-      }
-    };
-    
-    pause = async () => {
-      clearInterval(this.interval);
-      this.interval = null;
-      this.setState({ isPaused: true, });
-      if (this.state.sound) {
-        await this.state.sound.pauseAsync();
-      }
-    };
-    
-    resume = async () => {
-      this.setState({ isPaused: false, isRunning: true });
-      this.startTimer();
-      if (this.state.sound) {
-        await this.state.sound.playAsync();
-      }
-    };
-    
-    stop = async () => {
-      clearInterval(this.interval);
-      this.interval = null;
-      await this.stopSound();
-      this.setState({
-        isRunning: false,
-        isPaused: false,
-      });
-    };
-    
-    skip = async () => {
-      clearInterval(this.interval);
-      this.interval = null;
-      this.stop();
-      this.startBreakSession();
-      this.setState({ checkSkip: true });
-    };
-    
-    skipBreak = async () => {
-      clearInterval(this.interval);
-      this.interval = null;
-      await this.stop();
-      this.resetSession();
-    };
-    
-    resetSession = () => {
-      this.setState({
-        isRunning: false,
-        isBreak: false,
-        isPaused: false,
-        selectedMinutes: "0",
-        selectedSeconds: "0",
-        breakMinutes: 0,
-        breakSeconds: 5,
-        checkSkip: false,
-      });
-    };
-    
+    });
 
-    renderPickers = () => (
-      <View style={styles.pickerContainer}>
 
-        <View style={{flexDirection: 'row', width: '70%',justifyContent: 'space-between', alignItems: 'center'}}>
-          <Text style={styles.pickerLabel}>minutes</Text>
-          <Text style={styles.pickerLabel}>seconds</Text>
+  };
+
+  renderPickers = () => (
+    <View style={styles.pickerContainer}>
+      <View style={{ flexDirection: "row", width: "70%", justifyContent: "space-between", alignItems: "center" }}>
+        <Text style={styles.pickerLabel}>minutes</Text>
+        <Text style={styles.pickerLabel}>seconds</Text>
+      </View>
+
+      <View style={{ flexDirection: "row", width: "85%", justifyContent: "space-between", alignItems: "center", marginVertical: 20 }}>
+        <View style={styles.pickerWrapper}>
+          <Picker
+            style={styles.picker}
+            itemStyle={styles.pickerItem}
+            selectedValue={this.state.selectedMinutes}
+            onValueChange={(itemValue) => {
+              this.setState({ selectedMinutes: itemValue });
+            }}
+            mode="dropdown"
+          >
+            {AVAILABLE_MINUTES.map((value) => (
+              <Picker.Item key={value} label={value} value={value} />
+            ))}
+          </Picker>
         </View>
 
-        <View style={{flexDirection: 'row', width: '85%',justifyContent: 'space-between', alignItems: 'center', marginVertical: 20}}>
-          <View style={styles.pickerWrapper}>
+        <View style={styles.pickerWrapper}>
+          <Picker
+            style={styles.picker}
+            itemStyle={styles.pickerItem}
+            selectedValue={this.state.selectedSeconds}
+            onValueChange={(itemValue) => {
+              this.setState({ selectedSeconds: itemValue });
+            }}
+            mode="dropdown"
+          >
+            {AVAILABLE_SECONDS.map((value) => (
+              <Picker.Item key={value} label={value} value={value} />
+            ))}
+          </Picker>
+        </View>
+      </View>
+    </View>
+  );
 
-            <Picker
-              style={styles.picker}
-              itemStyle={styles.pickerItem}
-              selectedValue={this.state.selectedMinutes}
-              onValueChange={(itemValue) => {
-                this.setState({ selectedMinutes: itemValue });
-              }}
-              mode="dropdown"
-            >
-              {AVAILABLE_MINUTES.map((value) => (
-                <Picker.Item key={value} label={value} value={value} />
-              ))}
-            </Picker>
+  render() {
+    const { minutes, seconds } = getRemaining(this.state.remainingSeconds);
+    const { isBreak, isRunning, isPaused, checkSkip } = this.state;
 
+    const imageSource = isBreak ? require("../../Imgs/undraw_Chilling_re_4iq9.png") : require("../../Imgs/Book lover-bro.png");
+    const descriptionText = isBreak ? "Freely get rest" : "Don't lose your focus";
+
+    return (
+      <View style={styles.container}>
+        <StatusBar barStyle="dark-content" />
+        <View style={styles.innerContainer}>
+          <Image source={imageSource} style={styles.illustration} />
+
+          {isRunning || isBreak ? (
+            <Text style={styles.timerText}>{`${minutes}:${seconds}`}</Text>
+          ) : (
+            this.renderPickers()
+          )}
+          <Text style={styles.descriptionText}>{descriptionText}</Text>
+          
+          { 
+            !isBreak ? (
+              isRunning && !isPaused ? (
+                <TouchableOpacity onPress={this.pause} style={[styles.button, styles.buttonPause]}>
+                  <FontAwesome5 name="pause" size={24} color="black" />
+                </TouchableOpacity>
+              ) : (
+                <TouchableOpacity
+                  onPress={isPaused ? this.resume : this.startFocusSession}
+                  style={styles.button}
+                >
+                  <AntDesign name="caretright" size={35} color="black" />
+                </TouchableOpacity>
+              )
+            ) : (
+              <Text> </Text>
+            )
+          }
+
+          <View style={styles.buttonsContainer}>
+            {checkSkip ? (
+              <TouchableOpacity style={styles.smallButton} onPress={this.skipBreak}>
+                <Text style={styles.smallButtonText}>skip</Text>
+              </TouchableOpacity>
+            ) : (
+              <TouchableOpacity style={styles.smallButton} onPress={this.skip}>
+                <Text style={styles.smallButtonText}>skip</Text>
+              </TouchableOpacity>
+            )}
           </View>
-
-
-          <View style={styles.pickerWrapper}>
-            <Picker
-              style={styles.picker}
-              itemStyle={styles.pickerItem}
-              selectedValue={this.state.selectedSeconds}
-              onValueChange={(itemValue) => {
-                this.setState({ selectedSeconds: itemValue });
-              }}
-              mode="dropdown"
-            >
-              {AVAILABLE_SECONDS.map((value) => (
-                <Picker.Item key={value} label={value} value={value} />
-              ))}
-            </Picker>
-
-          </View>   
         </View>
       </View>
     );
-    
-
-    render() {
-      const { minutes, seconds } = getRemaining(this.state.remainingSeconds);
-      const { isBreak, isRunning, isPaused, checkSkip } = this.state;
-    
-      const imageSource = isBreak ? require("../../Imgs/undraw_Chilling_re_4iq9.png") : require("../../Imgs/Book lover-bro.png");
-      const descriptionText = isBreak ? "Freely get rest" : "Don't lose your focus";
-    
-      return (
-        <View style={styles.container}>
-          <StatusBar barStyle="dark-content" />
-          <View style={styles.innerContainer}>
-
-            <Image source={imageSource} style={styles.illustration} />
-
-            {isRunning ? (
-              <Text style={styles.timerText}>{`${minutes}:${seconds}`}</Text>
-            ) : (
-              this.renderPickers()
-            )}
-            <Text style={styles.descriptionText}>{descriptionText}</Text>
-
-            {isRunning && !isPaused ? (
-              <TouchableOpacity onPress={this.pause} style={[styles.button, styles.buttonPause]}>
-                <FontAwesome5 name="pause" size={24} color="black" />
-              </TouchableOpacity>
-            ) : (
-              <TouchableOpacity
-                onPress={isPaused ? this.resume : this.startFocusSession}
-                style={styles.button}
-              >
-                <AntDesign name="caretright" size={35} color="black" />
-              </TouchableOpacity>
-            )}
-            <View style={styles.buttonsContainer}>
-              {checkSkip ? (
-                <TouchableOpacity style={styles.smallButton} onPress={this.skipBreak}>
-                  <Text style={styles.smallButtonText}>skip</Text>
-                </TouchableOpacity>
-              ) : (
-                <TouchableOpacity style={styles.smallButton} onPress={this.skip}>
-                  <Text style={styles.smallButtonText}>skip</Text>
-                </TouchableOpacity>
-              )}
-            </View>
-          </View>
-        </View>
-      );
-    }
+  }
 }
 
 
