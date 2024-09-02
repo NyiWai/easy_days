@@ -353,20 +353,16 @@ const styles = StyleSheet.create({
     Logo: {
       flexDirection: 'row',
       alignItems: 'center',
-      // marginLeft: '13%',
       marginTop: 0,
-      // marginRight: 5
     },
     Logo_text: {
       fontFamily: 'Knewave',
       fontSize: 20,
-      // marginLeft: '20%',
   },
     
     illustration: {
       width: '100%',
       height: 320,
-      // marginBottom: 12,
       resizeMode: "contain",
     },
     button: {
