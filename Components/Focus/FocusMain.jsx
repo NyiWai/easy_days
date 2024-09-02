@@ -333,8 +333,7 @@ export default class App extends Component {
   interval = null;
 
   async componentDidMount() {
-    const { sound } = await Audio.Sound.createAsync(
-      require("../../assets/Sounds/CLOCK TICKING SILENCE AMBIENCE.mp3"),
+    const { sound } = await Audio.Sound.createAsync(require("../../assets/Sounds/CLOCK TICKING SILENCE AMBIENCE.mp3"),
       { shouldPlay: false, isLooping: true }
     );
     this.setState({ sound });
