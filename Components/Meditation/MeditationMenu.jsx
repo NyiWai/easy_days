@@ -1,142 +1,134 @@
-import React, { Component,useState } from 'react'
-import { TouchableOpacity,ScrollView, StyleSheet,View, Text, Image } from 'react-native'
-import categoriesData from './categoriesData'
-// import songsData from './categoriesData'
-// import categoriesImage from '../../Imgs/trackCategories/cate1.jpg'
+import React, { useState, useEffect } from 'react';
+import { Audio } from 'expo-av';
+import Feather from '@expo/vector-icons/Feather';
+import { TouchableOpacity,ScrollView, StyleSheet, View, Text, Image,Button } from 'react-native'
+import { songsData } from './categoriesData';
 
+const MeditationMenu = ({ navigation }) => {
+    const [sound, setSound] = useState(null);
+    const [sameSong, setSameSong] = useState(false);
+    const [playingSong, setPlayingSong] = useState(null);
 
-const MeditationMenu = ({navigation}) => {
-  const [selectedCategory, setSelectedCategory] = useState('all');
-  const handleCategoryClick = (category) => {setSelectedCategory(category);};
+    useEffect(() => {
+        const loadSound = async () => {
+            const { sound } = await Audio.Sound.createAsync(playingSong);
+            setSound(sound);
+        };
+        loadSound();
+        return () => {
+            if (sound) {
+                sound.unloadAsync();
+            }
+        };
+    }, [playingSong]);
+    
+    const handlePlayPress = async (song) => {
+        if (playingSong.id !== song.id){
+            // await sound.pauseAsync();
+            if(sound){
 
-  // const filteredSongs = selectedCategory ? songsData.filter((song) => song.category === selectedCategory ): songsData;
-
-  const handleSongPress = (song) => {
-    // Handle song press actions here
-    console.log('Song pressed:', song);
-  };
-
-  return (
-    <>
-        <View style={styles.container}>
-            <Image style={styles.ScreenImage} source={require('../../Imgs/strelxzitzia-plant-bro.png')}/>
-            <View style={styles.bottomContainer}>
-              {/* <Image style={styles.bgImage} source={require('../../Imgs/active-woman-with-tablet-learning-online.png')}/> */}
-
-              <View style={styles.bottomSubContainer}>
-                <Text style={styles.categorieTitle} >Categories</Text>
-
-      {/* -----------Display all categories ---------- */}
-                <ScrollView horizontal={true} 
-                showsHorizontalScrollIndicator={false}
-                style={styles.categoriesContainer}>
-                    <TouchableOpacity
-                      style={styles.categorie} 
-                      onPress={() => handleCategoryClick('all')}
-                      >
-                      <Text style={styles.categorieText}>All</Text>
-                      <Image style={styles.categorieImage} source={require('../../Imgs/active-woman-with-tablet-learning-online.png')}/>
-                    </TouchableOpacity>
-
-                    {/* <TouchableOpacity
-                      key={category.id}
-                      style={styles.categorie} 
-                      onPress={() => handleCategoryClick(category.name)}
-                      >
-                      <Text style={styles.categorieText}>{category.name}</Text>
-                      <Img key={category.id} src={category.cateImage} alt={category.alt} />
-                      <Image style={styles.categorieImage} source={category.cateImage}/>
-                    </TouchableOpacity>
-                   */}
-                </ScrollView >
-
-        {/* -----------Display all song---------- */}
-                {/* <ScrollView style={styles.trackContainer}>   
-                  {filteredSongs.map((song) =>(
-                    console.log(song),
-                    <TouchableOpacity
-                      key={song.id}
-                      style={styles.track} 
-                      onPress={() => handleSongPress(song)}
-                      >
-                      <Text>{song.title}</Text>
-                      <Image source={require(song.Image)}/>
-                    </TouchableOpacity>
-                  ))}
-                </ScrollView> */}
-              </View>
-            </View>
+                await sound.stopAsync();
+                sound.unloadAsync();
+                setSound(null)
+                setPlayingSong(null);
                 
-        </View>
-    </>
-  )
-}
+            }
+            // Loadig new song .........
+            const newSound = new Audio.Sound();
+            await newSound.loadAsync(song.mp3);
+            await newSound.playAsync();
+            setPlayingSong(song);
+            setSound(newSound);
+        }else{
+            if (sameSong) {
+                      await sound.pauseAsync();
+                    } else {
+                      await sound.playAsync();
+                    }
+                    setSameSong(!sameSong);
+                  };
+        }
+    // const handlePlayPause = async () => {
+    //     if (isPlaying) {
+    //       await sound.pauseAsync();
+    //     } else {
+    //       await sound.playAsync();
+    //     }
+    
+    //     setIsPlaying(!isPlaying);
+    //   };
+
+    return (
+        <>
+            <View style={styles.container}>
+                <View style={styles.Bg}>
+                    <Image source={require('../../Imgs/Mindfulness-bro.png')} />
+                </View>
+
+                 <ScrollView>
+                    {songsData.map((song) => (
+                        <TouchableOpacity key={song.id} style={styles.button} onPress={() => handlePlayPress(song)}>
+                        {/* <Image source={song.image} style={{ width: 200, height: 200 }} /> */}
+                        <Text>{song.title}</Text>
+                        {playingSong?.id === song.id?
+                            <View>
+                                {sameSong ?  
+                                <Feather name="pause-circle" size={28} color="white" />
+                                :<Feather name="play-circle" size={28} color="white" />
+                                }
+                            </View>
+                            : 
+                            <Feather name="play-circle" size={28} color="white" />
+                            
+                        }
+                        {/* {playingSong?.id === song.id && <Text>Playing...</Text>} */}
+                        </TouchableOpacity>
+                    ))}
+                </ScrollView>
+
+                {/* <TouchableOpacity style={styles.button} onPress={handlePlayPause}>
+                {isPlaying ? <Feather name="pause-circle" size={28} color="white" />:
+                <Feather name="play-circle" size={28} color="white" />
+                }
+                </TouchableOpacity> */}
+            </View>
+        </>
+    )}
 
 const styles = StyleSheet.create({
 
-  container: {
-    flex: 1,
-    backgroundColor: '#fff',
-    alignItems: 'center',
-    // justifyContent: 'center',
-  },
-  ScreenImage:{
-    alignSelf: "flex-start",
-    width:300,
-    height:300,
-  },
-  bottomContainer:{
-    flex: 1,
-    alignItems: 'center',
-    // justifyContent: 'center',
-  },
-  bgImage: {
-    borderWidth:1,
-    flex: 1,
-    resizeMode: 'cover',
-  },
-  bottomSubContainer:{
-    position: 'absolute',
-  },
-  categorieTitle:{
-    fontSize: 18,
-    marginLeft:18,
-  },
-  categoriesContainer:{
-    backgroundColor: 'transparent',
-    height:90,
-    margin:8,
-  },
-  categorie:{
-    margin:5,
-    borderWidth:1,
-    borderRadius:6,
-  },
-  categorieImage:{
-    // position: 'static',
-    width:140,
-    height:100,
-  },
-  categorieText:{
-    position: 'absolute',
-    fontWeight: 'bold',
-    color: 'black' 
-  },
-  trackContainer:{
-    backgroundColor: 'transparent',
-    height: 240,
-    alignSelf: 'center',
-  },
-  track:{
-    backgroundColor:'#92E3A9',
-    width:300,
-    height:40,
-    margin:6,
-    borderRadius:6,
-    flex: 1,
-    maskToBounds: true
-  },
+    Logo_text: {
+        fontFamily: 'Knewave',
+        fontSize: 24,
+        marginBottom: '10%',
+    },
+    container: {
+        flex: 1,
+        backgroundColor: '#fff',
+        alignItems: 'center',
+        // justifyContent: 'center',
+    },
+    buttonContainer: {
+        flexDirection: 'row',
+        justifyContent: 'space-between',
+        width: '70%',
+        marginTop: '10%'
+    },
 
+    button: {
+        alignItems: 'center',
+        justifyContent: 'center',
+        paddingVertical: 12,
+        paddingHorizontal: 32,
+        borderRadius: 4,
+        elevation: 3,
+        backgroundColor: '#92E3A9',
+        marginTop: 20
+    },
+    buttonText: {
+        color: '#fff'
+
+    }
 });
 
 export default MeditationMenu
