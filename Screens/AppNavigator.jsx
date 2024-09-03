@@ -149,18 +149,9 @@ const AppNavigator = () => {
                 <Stack.Screen
                     name="ToDoScheduleMain"
                     component={ToDoScheduleMain}
-                    options={({ navigation }) => ({
-                        headerLeft: () => (
-                            <TouchableOpacity style={{marginStart:15 }}  onPress={() => navigation.goBack()}>
-                                <MaterialIcons name="arrow-back" size={28} color="black" />
-                            </TouchableOpacity>
-                        ),
-                        headerTitle: '',
-                        headerStyle: {
-                            shadowColor: 'transparent',
-                            elevation: 0,
-                        },
-                    })}
+                    options={{
+                        headerShown: false,
+                    }}
                 />
 
                 <Stack.Screen

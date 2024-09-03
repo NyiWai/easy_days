@@ -109,7 +109,6 @@ export default class FocusMain extends Component {
       this.startTimer();
     }
 
-    
   };
 
   startBreakSession = async () => {
@@ -195,8 +194,6 @@ export default class FocusMain extends Component {
       breakSeconds: 0,
       checkSkip: false,
     });
-
-
   };
 
   renderPickers = () => (
@@ -248,14 +245,6 @@ export default class FocusMain extends Component {
 
     const imageSource = isBreak ? require("../../Imgs/undraw_Chilling_re_4iq9.png") : require("../../Imgs/Book lover-bro.png");
     const descriptionText = isBreak ? "Freely get rest" : "Don't lose your focus";
-
-    // const [fontsLoaded] = useFonts({
-    //   Knewave: Knewave        
-    // })
-  
-    // if (!fontsLoaded) {
-    //   return null; // Handle loading state
-    // }
 
     return (
       <View style={styles.container}>
