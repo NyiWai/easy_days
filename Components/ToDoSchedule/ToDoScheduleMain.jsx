@@ -4,16 +4,20 @@ import MaterialIcons from '@expo/vector-icons/MaterialIcons';
 import profileIcon from '../../Imgs/user_1077114.png'
 import { useFonts } from 'expo-font';
 import Poly from '../../assets/Fonts/Poly/Poly-Regular.ttf'
+import ToDoTask from './ToDoTask';
+import Agenda from './Agenda';
+import AntDesign from '@expo/vector-icons/AntDesign';
 
 const ToDoScheduleMain = ({navigation}) => {
-    const [imageUri, setImageUri] = useState(null)
+    const [imageUri, setImageUri] = useState(null);
+    const [currentDate, setCurrentDate] = useState('');
     const [fontsLoaded] = useFonts({
         Poly: Poly        
-      })
+      });
     
     if (!fontsLoaded) {
         return null; // Handle loading state
-    }
+    };
 
     // for picking photo by userself
     const pickImage = async () => {
@@ -39,7 +43,7 @@ const ToDoScheduleMain = ({navigation}) => {
         }
     };
 
-    const [currentDate, setCurrentDate] = useState('');
+    
 
     useEffect(() => {
         const date = new Date();
@@ -83,13 +87,37 @@ const ToDoScheduleMain = ({navigation}) => {
                 </Text>
             </View>
             <View style={styles.BodyContainer}>
-                <Text style={{fontFamily: 'Poly', fontSize: 18}}>
+                <Text style={{fontFamily: 'Poly', fontSize: 18, top: 50}}>
                     Start your daily task easily
                 </Text>
                 <View>
                     <Image source={require('../../Imgs/Checklist-rafiki.png')}/>
                 </View>
-                
+            </View>
+            <View>
+                <View style={styles.TAButtons}>
+                    <TouchableOpacity
+                        style={styles.button}
+                        onPress={() => navigation.navigate('ToDoTask')}
+                    >
+                        <AntDesign name="pluscircle" size={24} color="#19C0DE" style={{right: 3}}/>
+                        <Text style={styles.buttonText}>To Do Task</Text>
+                    </TouchableOpacity>
+                    <TouchableOpacity
+                        style={styles.button}
+                        onPress={() => navigation.navigate('ToDoTask')}
+                    >
+                        <AntDesign name="pluscircle" size={24} color="#19C0DE" style={{right: 3}}/>
+                        <Text style={styles.buttonText}>Agenda</Text>
+                    </TouchableOpacity>
+                </View>
+                <TouchableOpacity
+                    style={styles.BirthdayButton}
+                    onPress={() => navigation.navigate('Birthday')}
+                >
+                    <AntDesign name="pluscircle" size={24} color="#19C0DE" style={{right: 3}}/>
+                    <Text style={styles.buttonText}>Birthday</Text>
+                </TouchableOpacity>
             </View>
         </View>                 
       )
@@ -130,6 +158,41 @@ const styles = StyleSheet.create({
         alignItems: "center",
         top: "3%"
     },
+    TAButtons: {
+        flexDirection: "row",
+        // width: "100%",
+        alignItems: "center",
+        justifyContent: "space-around"
+    },
+    button:{
+        flexDirection: 'row',
+        // alignItems: 'center',
+        justifyContent: 'space-around',
+        paddingVertical: 14,
+        paddingHorizontal: 13,
+        borderRadius: 13,
+        // elevation: 3,
+        backgroundColor: '#3084FE',
+        marginTop: 20,
+        width: "42%"
+    },
+    buttonText:{
+        color: '#fff',
+        fontSize: 13,
+    },
+    BirthdayButton: {
+        flexDirection: 'row',
+        alignSelf: "center",
+        justifyContent: 'space-around',
+        paddingVertical: 14,
+        paddingHorizontal: 14,
+        borderRadius: 13,
+        // elevation: 3,
+        backgroundColor: '#3084FE',
+        marginTop: 20,
+        width: "35%"
+    }
+    
 })
 
 

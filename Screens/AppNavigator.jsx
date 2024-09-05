@@ -14,6 +14,9 @@ import MeditationMain from '../Components/Meditation/MeditationMain';
 import MeditationMenu from '../Components/Meditation/MeditationMenu';
 import ToDoScheduleMain from '../Components/ToDoSchedule/ToDoScheduleMain';
 import CalendarMain from '../Components/Calendar/CalendarMain';
+import ToDoTask from '../Components/ToDoSchedule/ToDoTask';
+import Agenda from '../Components/ToDoSchedule/Agenda';
+import Birthday from '../Components/ToDoSchedule/Birthday';
 
 
 const Stack = createStackNavigator();
@@ -149,6 +152,30 @@ const AppNavigator = () => {
                 <Stack.Screen
                     name="ToDoScheduleMain"
                     component={ToDoScheduleMain}
+                    options={{
+                        headerShown: false,
+                    }}
+                />
+
+                <Stack.Screen
+                    name="ToDoTask"
+                    component={ToDoTask}
+                    options={{
+                        headerShown: false,
+                    }}
+                />
+
+                <Stack.Screen
+                    name="Agenda"
+                    component={Agenda}
+                    options={{
+                        headerShown: false,
+                    }}
+                />
+
+                <Stack.Screen
+                    name="Birthday"
+                    component={Birthday}
                     options={{
                         headerShown: false,
                     }}
