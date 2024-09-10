@@ -1,134 +1,303 @@
 import React, { useState, useEffect } from 'react';
 import { Audio } from 'expo-av';
 import Feather from '@expo/vector-icons/Feather';
-import { TouchableOpacity,ScrollView, StyleSheet, View, Text, Image,Button } from 'react-native'
-import { songsData } from './categoriesData';
+import { TouchableOpacity, ScrollView, StyleSheet, View, Text, Image } from 'react-native'
+import { categoriesData, songsData } from './categoriesData'
 
 const MeditationMenu = ({ navigation }) => {
-    const [sound, setSound] = useState(null);
-    const [sameSong, setSameSong] = useState(false);
-    const [playingSong, setPlayingSong] = useState(null);
 
-    useEffect(() => {
-        const loadSound = async () => {
-            const { sound } = await Audio.Sound.createAsync(playingSong);
-            setSound(sound);
-        };
-        loadSound();
-        return () => {
-            if (sound) {
-                sound.unloadAsync();
-            }
-        };
-    }, [playingSong]);
-    
-    const handlePlayPress = async (song) => {
-        if (playingSong.id !== song.id){
-            // await sound.pauseAsync();
-            if(sound){
+  const [Song, setSong] = useState(null);
+  const [soundOn, setSoundOn] = useState(null);
+  const [onPlay, setOnPlay] = useState(false)
+  const [loading, setLoading] = useState(false);
+  const [selectedCategory, setSelectedCategory] = useState('');
 
-                await sound.stopAsync();
-                sound.unloadAsync();
-                setSound(null)
-                setPlayingSong(null);
-                
-            }
-            // Loadig new song .........
-            const newSound = new Audio.Sound();
-            await newSound.loadAsync(song.mp3);
-            await newSound.playAsync();
-            setPlayingSong(song);
-            setSound(newSound);
-        }else{
-            if (sameSong) {
-                      await sound.pauseAsync();
-                    } else {
-                      await sound.playAsync();
-                    }
-                    setSameSong(!sameSong);
-                  };
+  const handleSongCatePress = (category) => { setSelectedCategory(category) };
+  const filteredSongs = selectedCategory ? songsData.filter((song) => song.category === selectedCategory) : songsData;
+
+  const unloadSong = async () => {
+    try {
+      if (soundOn !== null) {
+        await soundOn.pauseAsync();
+        await soundOn.stopAsync();
+        await soundOn.unloadAsync();
+        setOnPlay(false)
+        setSoundOn(null)
+        setSong(null)
+        console.log('unload song');
+      }
+    } catch (error) {
+      console.log(error);
+    }
+  }
+
+
+  useEffect(() => {
+    console.log("new Soun laoded")
+    console.log(soundOn)
+    return async () => {
+      if (Song) {
+        await unloadSong();
+        console.log("remove song2")
+      }
+      console.log('Leave');
+    };
+  }, [navigation,soundOn]);
+
+
+  useEffect(() => {
+    return async () => {
+      if (soundOn) {
+        await soundOn.unloadAsync()
+        console.log("remove song2")
+      }
+      console.log('Leave');
+    };
+  }, [navigation]);
+
+  const handlePlayPress = async (song) => {
+    if (Song === null || song.id !== Song.id) {
+      if (Song) {
+        await unloadSong();
+        console.log("remove song1")
+      }
+      setSong(song)
+      setLoading(true)
+      const { sound } = await Audio.Sound.createAsync(song.audio);
+      if (sound._loaded === true) {
+        setSoundOn(sound)
+        setLoading(false)
+        setOnPlay(true)
+        console.log("audo is ready")
+      }
+    } else {
+      if (song.id === Song.id) {
+        if (onPlay === true) {
+          console.log("pause")
+          await soundOn.pauseAsync();
+          setOnPlay(false)
+        } else {
+          console.log("Resume")
+          await soundOn.playAsync();
+          setOnPlay(true)
+          // await play()
         }
-    // const handlePlayPause = async () => {
-    //     if (isPlaying) {
-    //       await sound.pauseAsync();
-    //     } else {
-    //       await sound.playAsync();
-    //     }
-    
-    //     setIsPlaying(!isPlaying);
-    //   };
+      }
+    }
+  };
 
-    return (
-        <>
-            <View style={styles.container}>
-                <View style={styles.Bg}>
-                    <Image source={require('../../Imgs/Mindfulness-bro.png')} />
-                </View>
+const [onloop,setOnloop] = useState(false)
 
-                 <ScrollView>
-                    {songsData.map((song) => (
-                        <TouchableOpacity key={song.id} style={styles.button} onPress={() => handlePlayPress(song)}>
-                        {/* <Image source={song.image} style={{ width: 200, height: 200 }} /> */}
-                        <Text>{song.title}</Text>
-                        {playingSong?.id === song.id?
-                            <View>
-                                {sameSong ?  
-                                <Feather name="pause-circle" size={28} color="white" />
-                                :<Feather name="play-circle" size={28} color="white" />
-                                }
-                            </View>
-                            : 
+useEffect(() => {
+  return async () => {
+    if (soundOn) {
+      await soundOn.unloadAsync()
+      console.log("remove song2")
+    }
+    console.log('Leave');
+  };
+}, [navigation]);
+
+  const play = async () => {
+    const loopEverySecond = () => {
+      console.log(' loop.........');
+      const intervalId = setInterval(() => {
+        soundOn.setOnPlaybackStatusUpdate(async (status) => {
+          setOnloop(true)
+          console.log(status.positionMillis)
+          if (status.positionMillis >= status.durationMillis) {
+            setOnloop(false)
+            clearInterval(intervalId);
+            await soundOn.setStatusAsync({positionMillis:0,shouldPlay:false})
+            console.log(">>>>>",status)
+            console.log("reset Song")
+          }
+        });
+      }, 2000); // 1000 milliseconds = 1 second
+    }
+    if(onloop === false){
+      loopEverySecond()
+    }
+  }
+
+
+
+  return (
+    <>
+      <View style={styles.container}>
+        <Image style={styles.ScreenImage} source={require('../../Imgs/strelxzitzia-plant-bro.png')} />
+        <View style={styles.bottomContainer}>
+          {/* <Image style={styles.bgImage} source={require('../../Imgs/active-woman-with-tablet-learning-online.png')}/> */}
+
+          <View style={styles.bottomSubContainer}>
+            <Text style={styles.categorieTitle} >Categories</Text>
+
+            {/* -----------Display all categories ---------- */}
+            <ScrollView horizontal={true}
+              showsHorizontalScrollIndicator={false}
+              style={styles.categoriesContainer}>
+              <TouchableOpacity
+                style={styles.categorie}
+                onPress={() => handleSongCatePress('')}
+              >
+                <Text style={styles.categorieText}>All</Text>
+                <Image style={styles.categorieImage} source={require('../../Imgs/trackCategories/cate5.jpg')} />
+              </TouchableOpacity>
+
+              {categoriesData.map((category) => (
+                <TouchableOpacity
+                  key={category.id}
+                  style={styles.categorie}
+                  onPress={() => handleSongCatePress(category.name)}
+                >
+                  <Text style={styles.categorieText}>{category.name}</Text>
+                  <Image style={styles.categorieImage} source={category.cateImage} />
+                </TouchableOpacity>
+              ))}
+            </ScrollView >
+
+            {/* -----------Display all song---------- */}
+            <ScrollView style={styles.trackContainer}
+              showsVerticalScrollIndicator={false}
+            >
+              {filteredSongs.map((song) => (
+                <TouchableOpacity
+                  key={song.id}
+                  style={styles.track}
+                  onPress={() => handleSelectSongPress()}
+                >
+                  <Text style={styles.songText}>{song.title}</Text>
+                  <Image style={styles.SongImage} source={song.songImage} />
+                  <TouchableOpacity style={styles.checkBox} onPress={() => handlePlayPress(song)}
+                  >
+                    {onPlay === true && Song.id === song.id ?
+
+                      <Feather name="pause-circle" size={28} color="#92E3A9" />
+                      :
+                      <>
+                        {loading === true && Song.id === song.id ?
+                          <Image style={styles.loadGif} source={require('../../Imgs/trackCategories/load2.gif')} />
+                          :
+                          <>{Song !== null && Song.id === song.id ?
+                            <Feather name="play-circle" size={28} color="#92E3A9" />
+                            :
                             <Feather name="play-circle" size={28} color="white" />
-                            
+                          }
+                          </>
                         }
-                        {/* {playingSong?.id === song.id && <Text>Playing...</Text>} */}
-                        </TouchableOpacity>
-                    ))}
-                </ScrollView>
-
-                {/* <TouchableOpacity style={styles.button} onPress={handlePlayPause}>
-                {isPlaying ? <Feather name="pause-circle" size={28} color="white" />:
-                <Feather name="play-circle" size={28} color="white" />
-                }
-                </TouchableOpacity> */}
-            </View>
-        </>
-    )}
+                      </>
+                    }
+                  </TouchableOpacity>
+                </TouchableOpacity>
+              ))}
+            </ScrollView>
+          </View>
+        </View>
+      </View>
+    </>
+  )
+}
 
 const styles = StyleSheet.create({
 
-    Logo_text: {
-        fontFamily: 'Knewave',
-        fontSize: 24,
-        marginBottom: '10%',
-    },
-    container: {
-        flex: 1,
-        backgroundColor: '#fff',
-        alignItems: 'center',
-        // justifyContent: 'center',
-    },
-    buttonContainer: {
-        flexDirection: 'row',
-        justifyContent: 'space-between',
-        width: '70%',
-        marginTop: '10%'
-    },
-
-    button: {
-        alignItems: 'center',
-        justifyContent: 'center',
-        paddingVertical: 12,
-        paddingHorizontal: 32,
-        borderRadius: 4,
-        elevation: 3,
-        backgroundColor: '#92E3A9',
-        marginTop: 20
-    },
-    buttonText: {
-        color: '#fff'
-
-    }
+  container: {
+    flex: 1,
+    backgroundColor: '#fff',
+    alignItems: 'center',
+    // justifyContent: 'center',
+  },
+  ScreenImage: {
+    alignSelf: "flex-start",
+    width: 300,
+    height: 300,
+  },
+  bottomContainer: {
+    flex: 1,
+    alignItems: 'center',
+    // justifyContent: 'center',
+  },
+  bgImage: {
+    borderWidth: 1,
+    flex: 1,
+    resizeMode: 'cover',
+  },
+  bottomSubContainer: {
+    position: 'absolute',
+  },
+  categorieTitle: {
+    fontWeight: 'bold',
+    fontSize: 18,
+    marginLeft: 18,
+  },
+  categoriesContainer: {
+    backgroundColor: 'transparent',
+    height: 80,
+    margin: 8,
+  },
+  categorie: {
+    flex: 1,
+    margin: 5,
+    borderWidth: 0.5,
+    borderRadius: 10,
+  },
+  categorieImage: {
+    flex: 1,
+    zIndex: 1,
+    resizeMode: 'cover',
+    width: 150,
+    borderRadius: 10,
+    // position: 'relative',   
+  },
+  categorieText: {
+    paddingTop: 5,
+    paddingLeft: 10,
+    zIndex: 2,
+    position: 'absolute',
+    fontWeight: 'bold',
+    color: 'white'
+  },
+  trackContainer: {
+    backgroundColor: 'transparent',
+    height: 240,
+    alignSelf: 'center',
+  },
+  track: {
+    backgroundColor: '#92E3A9',
+    width: 300,
+    height: 40,
+    margin: 6,
+    borderRadius: 6,
+    flex: 1,
+    maskToBounds: true
+  },
+  SongImage: {
+    flex: 1,
+    zIndex: 1,
+    resizeMode: 'cover',
+    width: 300,
+    borderRadius: 7,
+    // position: 'relative',   
+  },
+  songText: {
+    padding: 10,
+    paddingLeft: 50,
+    zIndex: 2,
+    position: 'absolute',
+    fontWeight: 'bold',
+    color: 'white'
+  },
+  checkBox: {
+    position: 'absolute',
+    padding: 6,
+    width: 40,
+    height: 40,
+    zIndex: 2,
+    // backgroundColor: 'black',
+  },
+  loadGif: {
+    width: 25,
+    height: 25,
+  },
 });
 
 export default MeditationMenu
