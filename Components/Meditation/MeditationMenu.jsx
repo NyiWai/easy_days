@@ -157,7 +157,7 @@ useEffect(() => {
             </ScrollView >
 
             {/* -----------Display all song---------- */}
-            <ScrollView style={styles.trackContainer}
+            {/* <ScrollView style={styles.trackContainer}
               showsVerticalScrollIndicator={false}
             >
               {filteredSongs.map((song) => (
@@ -190,7 +190,7 @@ useEffect(() => {
                   </TouchableOpacity>
                 </TouchableOpacity>
               ))}
-            </ScrollView>
+            </ScrollView> */}
           </View>
         </View>
       </View>
