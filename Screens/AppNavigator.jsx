@@ -13,6 +13,8 @@ import MeditationWelcome from '../Components/Meditation/MeditationWelcome';
 import MeditationMain from '../Components/Meditation/MeditationMain';
 import MeditationMenu from '../Components/Meditation/MeditationMenu';
 import ToDoScheduleMain from '../Components/ToDoSchedule/ToDoScheduleMain';
+import MeditationTimeSet from '../Components/Meditation/MeditationTimeSet';
+import MeditationFinsh from '../Components/Meditation/MeditationFinish'
 import CalendarMain from '../Components/Calendar/CalendarMain';
 import ToDoTask from '../Components/ToDoSchedule/ToDoTask';
 import Agenda from '../Components/ToDoSchedule/Agenda';
@@ -138,6 +140,41 @@ const AppNavigator = () => {
                     options={({ navigation }) => ({
                         headerLeft: () => (
                             <TouchableOpacity style={{marginStart:15 }}  onPress={() => navigation.goBack()}>
+                                <MaterialIcons name="arrow-back" size={28} color="black" />
+                            </TouchableOpacity>
+                        ),
+                        headerTitle: '',
+                        headerStyle: {
+                            shadowColor: 'transparent',
+                            elevation: 0,
+                        },
+                    })}
+                />
+
+
+                <Stack.Screen
+                    name="MeditationFinsh"
+                    component={MeditationFinsh}
+                    options={({ navigation }) => ({
+                        headerLeft: () => (
+                            <TouchableOpacity style={{ marginStart: 15 }} onPress={() => navigation.goBack()}>
+                                <MaterialIcons name="arrow-back" size={28} color="black" />
+                            </TouchableOpacity>
+                        ),
+                        headerTitle: '',
+                        headerStyle: {
+                            shadowColor: 'transparent',
+                            elevation: 0,
+                        },
+                    })}
+                />
+
+                <Stack.Screen
+                    name="MeditationTimeSet"
+                    component={MeditationTimeSet}
+                    options={({ navigation }) => ({
+                        headerLeft: () => (
+                            <TouchableOpacity style={{ marginStart: 15 }} onPress={() => navigation.goBack()}>
                                 <MaterialIcons name="arrow-back" size={28} color="black" />
                             </TouchableOpacity>
                         ),

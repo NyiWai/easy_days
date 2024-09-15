@@ -43,11 +43,11 @@ const Birthday = ({navigation}) => {
   const [CustomDay, setCustomDay] = useState(0)
   const [selectedIndex, setSelectedIndex] = useState(0);
 
-  const [reminders, setReminders] = useState([]);
+  const [BirthdayDatas, setBirthdayDatas] = useState([]);
 
   const [menuVisible, setMenuVisible] = useState(false);
 
-
+  const [visibleBirthdayId, setVisibleBirthdayId] = useState(null)
   
 
   useEffect(() => {
@@ -116,16 +116,16 @@ const Birthday = ({navigation}) => {
         PutDaytoFinalCus = selectedIndex;
     }
 
-    const newReminder = {
+    const newDatas = {
       id: Date.now(),
       name: name,
       day: selectedDay,
       month: selectedMonth,
       customDay: PutDaytoFinalCus,
     };
-    console.log(newReminder)
+    console.log(newDatas)
 
-    setReminders((prevReminders) => [...prevReminders, newReminder]);
+    setBirthdayDatas((prevDatas) => [...prevDatas, newDatas]);
 
     setName('');
     setselectedDay(0);
@@ -134,12 +134,18 @@ const Birthday = ({navigation}) => {
     setSelectedIndex(0);
     setCustomDay(0)
     setCheckOption('Custom')
-
-    console.log(`Saved reminder: ${JSON.stringify(newReminder)}`)
+    setIsFormVisible(false)
+    console.log(`Saved reminder: ${JSON.stringify(newDatas)}`)
   };
   
-  const toggleMenu = () => {
-    setMenuVisible(!menuVisible);
+  
+  const toggleMenu = (BirthdayId) => {
+    if (visibleBirthdayId === BirthdayId){
+      setVisibleBirthdayId(null);
+    } else {
+      setVisibleBirthdayId(BirthdayId)
+    }
+    // setMenuVisible(!menuVisible);
   };
 
   const handleCustomCheck = (Custom_Day) => {
@@ -185,7 +191,7 @@ const Birthday = ({navigation}) => {
   };
 
   const handleReminderOk = () => {
-    setIsReminderVisible(false);
+    // setIsReminderVisible(false);
     setBellBackgroundColor('#36C8E2')
   }
 
@@ -215,24 +221,27 @@ const Birthday = ({navigation}) => {
 
         
         <ScrollView style={styles.BirthdayInfoContainer}>
-          {reminders.map((reminder) => (
-            <View key={reminder.id.toString()} style={styles.reminderInfo}>
-              <Text style={styles.reminderText}>{reminder.name}</Text>
-              <Text style={styles.reminderText}>{reminder.day} - {reminder.month}</Text>
-              <Text style={styles.reminderText}>{reminder.customDay}</Text>
+          {BirthdayDatas.map((BirthdayData) => (
+            <View key={BirthdayData.id.toString()} style={styles.reminderInfo}>
+              <View style={styles.nameContainer}>
+                <Text style={styles.BirthdayName}>{BirthdayData.name}</Text>
+              </View>
+              <Text style={styles.BirthdayText}>{BirthdayData.day} - {BirthdayData.month}</Text>
+              <Text style={styles.BirthdayText}>{BirthdayData.customDay}</Text>
 
               {/* Three-dot menu icon */}
-              <TouchableOpacity onPress={toggleMenu}>
+              <TouchableOpacity onPress={() => toggleMenu(BirthdayData.id)} style={{justifyContent:'flex-end'}}>
                 <MaterialIcons name="more-vert" size={24} color="black" />
               </TouchableOpacity>
 
+              <Text>{visibleBirthdayId === BirthdayData.id}</Text>
               {/* Conditional rendering for the Edit and Delete options in a dropdown style */}
-              {menuVisible && (
+              {visibleBirthdayId === BirthdayData.id && (
                 <View style={styles.dropdownMenu}>
-                  <TouchableOpacity onPress={() => handleEdit(reminder.id)}>
-                    <FontAwesome name="edit" size={25} color="blue" />
+                  <TouchableOpacity onPress={() => handleEdit(BirthdayData.id)}>
+                    <FontAwesome name="edit" size={25} color="#003262" />
                   </TouchableOpacity>
-                  <TouchableOpacity onPress={() => handleDelete(reminder.id)}>
+                  <TouchableOpacity onPress={() => handleDelete(BirthdayData.id)}>
                     <FontAwesome name="trash" size={25} color="red" />
                   </TouchableOpacity>
                 </View>
@@ -366,7 +375,6 @@ const Birthday = ({navigation}) => {
                   showsVerticalScrollIndicator={false}
                   snapToInterval={ITEM_HEIGHT}
                   decelerationRate="fast"
-                  // onScroll={scrollHandler}
                   onScrollEndDrag={handleScrollEnd}
                   onMomentumScrollEnd={handleScrollEnd}
                   scrollEventThrottle={16}
@@ -380,8 +388,6 @@ const Birthday = ({navigation}) => {
                 <Text style={{alignSelf: 'center', fontSize: 18, fontWeight: 'bold', color: 'white'}}>Days</Text>
 
               </View>
-
-              {/* <Text>SelectedIndex {selectedIndex + 1}</Text> */}
               <View style={[styles.remindButtonContainer, {alignSelf: 'center', top: -10}]}>   
                 <TouchableOpacity style={styles.actionReminderButton} 
                   onPress={() => {
@@ -662,17 +668,28 @@ const styles = StyleSheet.create({
       marginTop:'10%',
       width: '100%',
     },
+
     reminderInfo: {
+      width: '97%',
       flexDirection: 'row',
       justifyContent: 'space-between',
       backgroundColor: '#d6eaf8', // Light blue background
       borderRadius: 10, // Rounded corners
       padding: 12, // Padding inside each item
       marginVertical: 10, // Space between items vertically
-      marginHorizontal: 10,
-    }
-    ,
-    reminderText: {
+      marginHorizontal: 5,
+      alignItems: 'center',
+    },
+    nameContainer:{
+      flex: 1,
+      marginRight: 10,
+    },
+    BirthdayName: {
+      fontWeight: '500',
+      // marginHorizontal: 10,
+      
+    },
+    BirthdayText: {
       // fontSize: 16,
       fontWeight: '500',
       marginHorizontal: 10,
@@ -697,13 +714,11 @@ const styles = StyleSheet.create({
     dropdownMenu: {
       position: 'absolute',
       right: 40, // Added some padding from the right edge
-      // top: 20,
-
       width: 85,
       height: 40,
       flexDirection: 'row',
       justifyContent: 'space-between',
-      backgroundColor: '#c0c0c0',
+      backgroundColor: '#E5E4E2',
       borderRadius: 8, // Rounded corners
       shadowColor: '#000',
       shadowOffset: { width: 0, height: 2 },
