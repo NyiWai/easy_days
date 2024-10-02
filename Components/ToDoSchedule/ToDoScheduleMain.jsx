@@ -11,39 +11,6 @@ import AntDesign from '@expo/vector-icons/AntDesign';
 const ToDoScheduleMain = ({navigation}) => {
     const [imageUri, setImageUri] = useState(null);
     const [currentDate, setCurrentDate] = useState('');
-    const [fontsLoaded] = useFonts({
-        Poly: Poly        
-      });
-    
-    if (!fontsLoaded) {
-        return null; // Handle loading state
-    };
-
-    // for picking photo by userself
-    const pickImage = async () => {
-        // Request permission to access the gallery
-        const permissionResult = await ImagePicker.requestMediaLibraryPermissionsAsync();
-    
-        if (permissionResult.granted === false) {
-          alert("Permission to access camera roll is required!");
-          return;
-        }
-    
-        // Pick image from the gallery
-        const result = await ImagePicker.launchImageLibraryAsync({
-          mediaTypes: ImagePicker.MediaTypeOptions.Images,
-          allowsEditing: true,
-          aspect: [4, 3],
-          quality: 1,
-        });
-    
-        // If user did not cancel image picker, set the image URI
-        if (!result.canceled) {
-          setImageUri(result.uri);
-        }
-    };
-
-    
 
     useEffect(() => {
         const date = new Date();
@@ -52,16 +19,53 @@ const ToDoScheduleMain = ({navigation}) => {
         const userLocale = Intl.DateTimeFormat().resolvedOptions().locale;
         const userTimeZone = Intl.DateTimeFormat().resolvedOptions().timeZone;
         
-        // Format date as "day-month-year" with hyphens, using user's local time zone
-        const formattedDate = new Intl.DateTimeFormat(userLocale, {
-            day: '2-digit',
-            month: '2-digit',
-            year: 'numeric',
-            timeZone: userTimeZone // Use user's local time zone
-        }).format(date).replace(/\//g, '-'); // Replaces slashes with hyphens
+        // Format the date components
+        const day = date.toLocaleString(userLocale, { day: '2-digit', timeZone: userTimeZone });
+        const month = date.toLocaleString(userLocale, { month: '2-digit', timeZone: userTimeZone });
+        const year = date.toLocaleString(userLocale, { year: 'numeric', timeZone: userTimeZone });
+    
+        // Combine in "dd-mm-yyyy" format
+        const formattedDate = `${day}-${month}-${year}`;
+    
+        setCurrentDate(formattedDate);
+      }, []);
 
-            setCurrentDate(formattedDate);
-        }, []);
+    const [fontsLoaded] = useFonts({
+        Poly: Poly        
+     });
+    
+    if (!fontsLoaded) {
+        return null; // Handle loading state
+    };
+
+    // for picking photo by userself
+
+    // const pickImage = async () => {
+    //     // Request permission to access the gallery
+    //     const permissionResult = await ImagePicker.requestMediaLibraryPermissionsAsync();
+    
+    //     if (permissionResult.granted === false) {
+    //       alert("Permission to access camera roll is required!");
+    //       return;
+    //     }
+    
+    //     // Pick image from the gallery
+    //     const result = await ImagePicker.launchImageLibraryAsync({
+    //       mediaTypes: ImagePicker.MediaTypeOptions.Images,
+    //       allowsEditing: true,
+    //       aspect: [4, 3],
+    //       quality: 1,
+    //     });
+    
+    //     // If user did not cancel image picker, set the image URI
+    //     if (!result.canceled) {
+    //       setImageUri(result.uri);
+    //     }
+    // };
+
+    
+
+    
 
 
     return (

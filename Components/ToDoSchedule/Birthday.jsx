@@ -5,13 +5,14 @@ import { useFonts } from 'expo-font';
 import Poly from '../../assets/Fonts/Poly/Poly-Regular.ttf'
 import AntDesign from '@expo/vector-icons/AntDesign';
 import FontAwesome from '@expo/vector-icons/FontAwesome';
+import MaterialCommunityIcons from '@expo/vector-icons/MaterialCommunityIcons';
 import ScrollPicker from 'react-native-wheel-scrollview-picker';
 import { Picker } from "@react-native-picker/picker";
 // import { Picker as WheelPicker } from "react-native-wheel-picker-expo";
 import Animated, { useSharedValue, useAnimatedScrollHandler } from 'react-native-reanimated';
-
+import * as FileSystem from 'expo-file-system';
 import RNPickerSelect from 'react-native-picker-select';
-
+import * as SQLite from 'expo-sqlite/legacy';
 
 const { height } = Dimensions.get('window');
 const ITEM_HEIGHT = 50;
@@ -19,6 +20,8 @@ const VIEW_HEIGHT = 150;
 
 const Birthday = ({navigation}) => {
   const [currentDate, setCurrentDate] = useState('');
+  
+  const [placeholderName, setplaceholderName] = useState('Name')
 
   const [name, setName] = useState('');
 
@@ -34,8 +37,6 @@ const Birthday = ({navigation}) => {
 
   const [ReminderCustom, setReminderCustom] = useState(false)
 
-  const days = Array.from({ length: 31 }, (_, i) => (i + 1).toString());
-
   const [checkOption, setCheckOption] = useState('Custom')
 
   const [bellBackgroundColor, setBellBackgroundColor] = useState('#eeeeee')
@@ -48,8 +49,44 @@ const Birthday = ({navigation}) => {
   const [menuVisible, setMenuVisible] = useState(false);
 
   const [visibleBirthdayId, setVisibleBirthdayId] = useState(null)
-  
 
+  const [checkEdit, setcheckEdit] = useState(false)
+
+  const [checkEditId, setcheckEditId] = useState(null)
+
+  const db = SQLite.openDatabase('birthdays')
+
+  // console.log(db)
+
+  const days = Array.from({ length: 31 }, (_, i) => (i + 1).toString());
+  
+  const [fontsLoaded] = useFonts({
+    Poly: Poly        
+  });
+
+  if (!fontsLoaded) {
+      return null; // Handle loading state
+  };
+  
+  const Birthday_Array = (len) => {
+    const arr = [];
+    let i = 1;
+    while (i < len) {
+      arr.push(i.toString());
+      i += 1;
+    }
+    return arr;
+  }
+
+  const Days = Birthday_Array(32);
+  const Month = ['Jan', 'Feb', 'Mar', 'Apr', 'May', 'Jun', 'Jul', 'Aug', 'Sep', 'Oct', 'Nov', 'Dec'];
+  const reminderOptions = ['None', '1 day early', '1 week early', '1 month early', 'Custom'];
+  
+  const numbers = Array.from({ length: 31 }, (_, i) => i + 1); // Array of numbers from 1 to 31
+  const extendedNumbers = [...numbers, ...numbers, ...numbers]; // Extend the array for looping effect
+  const flatListRef = useRef(null);
+
+  
   useEffect(() => {
     const date = new Date();
     
@@ -67,14 +104,63 @@ const Birthday = ({navigation}) => {
 
     setCurrentDate(formattedDate);
   }, []);
-  
-  const [fontsLoaded] = useFonts({
-    Poly: Poly        
-  });
 
-  if (!fontsLoaded) {
-      return null; // Handle loading state
-  };
+  useEffect(() => {
+    // Create table if not exists
+    db.transaction(tx => {
+      tx.executeSql(
+        
+        'CREATE TABLE IF NOT EXISTS birthdays (id INTEGER PRIMARY KEY AUTOINCREMENT, name TEXT, day TEXT, month TEXT, reminder TEXT);',
+        [],
+        () => console.log('Table created successfully'),
+        (_, error) => console.log('Error creating table:', error)
+      );
+    });
+
+    db.transaction(tx => {
+      tx.executeSql(
+        'PRAGMA table_info(birthdays);',
+        [],
+        (_, { rows }) => {
+          // console.log('Table schema:', rows._array);
+        },
+        (_, error) => console.log('Error checking table schema:', error)
+      );
+    });
+    
+
+    // If need to drop and recreate new table
+    // db.transaction(tx => {
+    //   tx.executeSql(
+    //     'DROP TABLE IF EXISTS birthdays;',
+    //     [],
+    //     () => {
+    //       console.log('Table dropped successfully');
+    //       tx.executeSql(
+    //         'CREATE TABLE IF NOT EXISTS birthdays (id INTEGER PRIMARY KEY AUTOINCREMENT, name TEXT, day TEXT, month TEXT, reminder TEXT);',
+    //         [],
+    //         () => console.log('Table created successfully'),
+    //         (_, error) => console.log('Error creating table: ', error)
+    //       );
+    //     },
+    //     (_, error) => console.log('Error dropping table: ', error)
+    //   );
+    // });
+  
+    // Fetch data
+    db.transaction(tx => {
+      tx.executeSql(
+        'SELECT * FROM birthdays;',
+        [],
+        (_, { rows }) => {
+          console.log('Fetched data: ', rows._array);
+          setBirthdayDatas(rows._array);
+        },
+        (_, error) => console.log('Error fetching data: ', error)
+      );
+    });
+  }, []); // Empty dependency array ensures this effect runs once on mount
+
 
   const handleReminderPress = () => {
     setIsReminderVisible(true);
@@ -121,12 +207,32 @@ const Birthday = ({navigation}) => {
       name: name,
       day: selectedDay,
       month: selectedMonth,
-      customDay: PutDaytoFinalCus,
+      reminder: PutDaytoFinalCus,
     };
-    console.log(newDatas)
 
-    setBirthdayDatas((prevDatas) => [...prevDatas, newDatas]);
-
+    db.transaction(tx => {
+      tx.executeSql(
+        'INSERT INTO birthdays (name, day, month, reminder) VALUES (?, ?, ?, ?);',
+        [newDatas.name, newDatas.day, newDatas.month, newDatas.reminder], 
+        (_, result) => {
+          console.log('Data inserted successfully', result);
+          
+          // Fetch updated data after insert
+          tx.executeSql(
+            'SELECT * FROM birthdays;',
+            [],
+            (_, { rows }) => {
+              console.log('Updated data: ', rows._array);
+              setBirthdayDatas(rows._array);  // Update state with the latest data
+            },
+            (_, error) => console.log('Error fetching data: ', error)
+          );
+        },
+        (_, error) => {
+          console.log('Error inserting data : ', error);
+        }
+      );
+    });
     setName('');
     setselectedDay(0);
     setselectedMonth(0);
@@ -135,7 +241,6 @@ const Birthday = ({navigation}) => {
     setCustomDay(0)
     setCheckOption('Custom')
     setIsFormVisible(false)
-    console.log(`Saved reminder: ${JSON.stringify(newDatas)}`)
   };
   
   
@@ -145,32 +250,11 @@ const Birthday = ({navigation}) => {
     } else {
       setVisibleBirthdayId(BirthdayId)
     }
-    // setMenuVisible(!menuVisible);
   };
 
   const handleCustomCheck = (Custom_Day) => {
     setReminderCustom(false);
   }
-
-  const Birthday_Array = (len) => {
-    const arr = [];
-    let i = 1;
-    while (i < len) {
-      arr.push(i.toString());
-      i += 1;
-    }
-    return arr;
-  }
-
-  const Days = Birthday_Array(32);
-  const Month = ['Jan', 'Feb', 'Mar', 'Apr', 'May', 'Jun', 'Jul', 'Aug', 'Sep', 'Oct', 'Nov', 'Dec'];
-  const reminderOptions = ['None', '1 day early', '1 week early', '1 month early', 'Custom'];
-  
-  const numbers = Array.from({ length: 31 }, (_, i) => i + 1); // Array of numbers from 1 to 31
-  const extendedNumbers = [...numbers, ...numbers, ...numbers]; // Extend the array for looping effect
-  const flatListRef = useRef(null);
-
-  
 
   const handleScrollEnd = (event) => {
     const offsetY = event.nativeEvent.contentOffset.y;
@@ -191,9 +275,100 @@ const Birthday = ({navigation}) => {
   };
 
   const handleReminderOk = () => {
-    // setIsReminderVisible(false);
+    setIsReminderVisible(false);
     setBellBackgroundColor('#36C8E2')
   }
+
+  const handleDelete = (id) => {
+    db.transaction(tx => {
+      tx.executeSql(
+        'DELETE FROM birthdays WHERE id = ?;',
+        [id],
+        (_, result) => {
+          console.log('Record deleted successfully', result);
+          
+          // Optionally, fetch updated data after the deletion
+          tx.executeSql(
+            'SELECT * FROM birthdays;',
+            [],
+            (_, { rows }) => {
+              console.log('Updated data: ', rows._array);
+              setBirthdayDatas(rows._array);  // Update state with the latest data
+            },
+            (_, error) => console.log('Error fetching data: ', error)
+          );
+        },
+        (_, error) => console.log('Error deleting record:', error)
+      );
+    });
+  };
+
+  const handleEdit = (prevValues) => {
+    setplaceholderName(prevValues.name);
+    setselectedDay(prevValues.day);
+    setselectedMonth(prevValues.month);
+    setIsFormVisible(true);
+    setcheckEdit(true);
+    
+  }
+
+  const handleEditSave = () => {
+
+    let PutDaytoFinalCus = null;
+    if (checkOption === 'Custom'){
+      const FinalCustomDay = selectedIndex + 1;
+      if (FinalCustomDay === 1){
+        PutDaytoFinalCus = `${FinalCustomDay}day`
+      } else{
+        PutDaytoFinalCus = `${FinalCustomDay}days`
+      }
+    } else {
+        PutDaytoFinalCus = selectedIndex;
+    }
+
+    const newDatas = {
+      id: Date.now(),
+      name: name,
+      day: selectedDay,
+      month: selectedMonth,
+      reminder: PutDaytoFinalCus,
+    };
+
+    db.transaction(tx => {
+      console.log("update works")
+      tx.executeSql(
+        'UPDATE birthdays SET name = ?, day = ?, month = ?, reminder = ? WHERE id = ?;',
+        [newDatas.name, newDatas.day, newDatas.month, newDatas.reminder, checkEditId],
+        (_, result) => {
+          // console.log('Record updated successfully', result);
+          
+          // Optionally, fetch updated data after the update
+          tx.executeSql(
+            'SELECT * FROM birthdays;',
+            [],
+            (_, { rows }) => {
+              // console.log('Updated data: ', rows._array);
+              setBirthdayDatas(rows._array);  // Update state with the latest data
+            },
+            (_, error) => console.log('Error fetching data: ', error)
+          );
+        },
+        (_, error) => console.log('Error updating record:', error)
+      );
+    });
+
+    setVisibleBirthdayId(null);
+    setName('');
+    setselectedDay(0);
+    setselectedMonth(0);
+    setBellBackgroundColor('#eeeeee');
+    setSelectedIndex(0);
+    setCustomDay(0)
+    setCheckOption('Custom')
+    setIsFormVisible(false)
+    setcheckEdit(false)
+  }
+  
 
   return (
     <View style={styles.Container}>
@@ -227,7 +402,7 @@ const Birthday = ({navigation}) => {
                 <Text style={styles.BirthdayName}>{BirthdayData.name}</Text>
               </View>
               <Text style={styles.BirthdayText}>{BirthdayData.day} - {BirthdayData.month}</Text>
-              <Text style={styles.BirthdayText}>{BirthdayData.customDay}</Text>
+              <Text style={styles.BirthdayText}>{BirthdayData.reminder}</Text>
 
               {/* Three-dot menu icon */}
               <TouchableOpacity onPress={() => toggleMenu(BirthdayData.id)} style={{justifyContent:'flex-end'}}>
@@ -238,7 +413,7 @@ const Birthday = ({navigation}) => {
               {/* Conditional rendering for the Edit and Delete options in a dropdown style */}
               {visibleBirthdayId === BirthdayData.id && (
                 <View style={styles.dropdownMenu}>
-                  <TouchableOpacity onPress={() => handleEdit(BirthdayData.id)}>
+                  <TouchableOpacity onPress={() => {handleEdit(BirthdayData); setcheckEditId(BirthdayData.id)}}>
                     <FontAwesome name="edit" size={25} color="#003262" />
                   </TouchableOpacity>
                   <TouchableOpacity onPress={() => handleDelete(BirthdayData.id)}>
@@ -257,7 +432,7 @@ const Birthday = ({navigation}) => {
             </View>
             <TextInput
               style={styles.input}
-              placeholder="Name"
+              placeholder= {placeholderName}
               value={name}
               onChangeText={setName}
             />
@@ -306,15 +481,23 @@ const Birthday = ({navigation}) => {
 
               <TouchableOpacity style={[styles.reminderButton, { backgroundColor: bellBackgroundColor }]} onPress={handleReminderPress}>
                   <FontAwesome name="bell" size={24} color="#525252" style={{top: 8}}/>
+                  {/* <MaterialCommunityIcons name="bell-circle-outline" size={24} color="black" /> */}
               </TouchableOpacity>
             </View>
 
             {/* Action Buttons */}
             <View style={styles.actionButtons}>
-              <TouchableOpacity onPress={() => setIsFormVisible(false)}>
+              <TouchableOpacity onPress={() => {
+              setIsFormVisible(false);
+              setplaceholderName("Name");
+              setselectedDay('1');
+              setselectedMonth("Jan");
+              setVisibleBirthdayId(null);
+              setcheckEdit(false)
+              }}>
                 <Text style={styles.actionButtonText}>Cancel</Text>
               </TouchableOpacity>
-              <TouchableOpacity onPress={() => handleReminderSave()}>
+              <TouchableOpacity onPress={() => checkEdit ? handleEditSave() : handleReminderSave()}>
                 <Text style={styles.actionButtonText}>Save</Text>
               </TouchableOpacity>
             </View>
