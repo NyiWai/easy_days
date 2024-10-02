@@ -14,7 +14,7 @@ import MeditationMain from '../Components/Meditation/MeditationMain';
 import MeditationMenu from '../Components/Meditation/MeditationMenu';
 import ToDoScheduleMain from '../Components/ToDoSchedule/ToDoScheduleMain';
 import MeditationTimeSet from '../Components/Meditation/MeditationTimeSet';
-import MeditationFinsh from '../Components/Meditation/MeditationFinish'
+import MeditationFinish from '../Components/Meditation/MeditationFinish'
 import CalendarMain from '../Components/Calendar/CalendarMain';
 import ToDoTask from '../Components/ToDoSchedule/ToDoTask';
 import Agenda from '../Components/ToDoSchedule/Agenda';
@@ -153,8 +153,8 @@ const AppNavigator = () => {
 
 
                 <Stack.Screen
-                    name="MeditationFinsh"
-                    component={MeditationFinsh}
+                    name="MeditationFinish"
+                    component={MeditationFinish}
                     options={({ navigation }) => ({
                         headerLeft: () => (
                             <TouchableOpacity style={{ marginStart: 15 }} onPress={() => navigation.goBack()}>

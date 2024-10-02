@@ -2,9 +2,7 @@ import React, { useState, useEffect } from 'react';
 import { Audio } from 'expo-av';
 import Feather from '@expo/vector-icons/Feather';
 import { TouchableOpacity, ScrollView, StyleSheet, View, Text, Image } from 'react-native'
-import { categoriesData, songsData } from './categoriesData';
-
-
+import { categoriesData, songsData } from './categoriesData'
 
 
 const MeditationMenu = ({ navigation }) => {
@@ -35,7 +33,7 @@ const MeditationMenu = ({ navigation }) => {
   }
 
   useEffect(() => {
-    console.log("new Sound loaded")
+    console.log("new Soun laoded")
     console.log(soundOn)
     return async () => {
       if (Song) {
@@ -117,7 +115,6 @@ useEffect(()=>{
 
 
 const handleSelectSong = (song) => {
-  console.log('song id : ', song.id)
   navigation.navigate('MeditationTimeSet',{'id':song.id})
   setTimeSet(!timeSet)
 }
