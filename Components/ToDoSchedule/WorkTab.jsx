@@ -1,7 +1,8 @@
 import React, { useRef, useState, useEffect } from 'react'
-import { Platform, Button, StyleSheet, TouchableOpacity, View, Text, Animated, TextInput, Switch, FlatList, Modal } from 'react-native'
+import { Platform, Button, StyleSheet, TouchableOpacity, View, Text, Animated, TextInput, Switch, FlatList, Modal, ScrollView } from 'react-native'
 import MaterialIcons from '@expo/vector-icons/MaterialIcons';
 import FontAwesome5 from '@expo/vector-icons/FontAwesome5';
+import FontAwesome6 from '@expo/vector-icons/FontAwesome6';
 import Entypo from '@expo/vector-icons/Entypo';
 import DateTimePicker from '@react-native-community/datetimepicker';
 
@@ -35,6 +36,9 @@ const createArray_Minutes = (length) => {
   return arr;
 };
 
+const Array_Hours = ['00', '01', '03', '04', '05', '06', '07', '08', '09', '10', '11', '12']
+const Array_Minutes = ['00', '01', '02', '03', '04', '05', '06', '07', '08', '09', '10']
+
 const AVAILABLE_HOURS = createArray_Hours(13);
 const AVAILABLE_MINUTES = createArray_Minutes(60);
 
@@ -57,11 +61,13 @@ const WorkTab = () => {
   const [workTaskInputSession, setworkTaskInputSession] = useState(false);
 
   const [HandleToDoTaskButton, setHandleToDoTaskButton] = useState(false)
-
+  const [newTask, setNewTask] = useState('Add Task Name')
+  const [Description, setDescription] = useState('Add Task Description')
   const [taskName, setTaskName] = useState('');
   const [descriptionText, setDescriptionText] = useState('')
   const [selectedDate, setSelectedDate] = useState(today)
   const [selectedReminderDate, setSelectedReminderDate] = useState(today)
+  const [selectedRepeat, setSelectedRepeat] = useState('None')
   const [isOpenCalendar, setIsOpenCalendar] = useState(false)
 
   const [isOpenSettingTime, setIsOpenSettingTime] = useState(false)
@@ -78,13 +84,26 @@ const WorkTab = () => {
 
   const [isAM, setIsAM] = useState(true);
 
+  const [selectedSetTime, setSelectedSetTime] = useState(null)
+
   const toggleSwitch = () => setIsAM(previousState => !previousState); // Toggle between AM and PM
   const date = new Date();
+  const daysOfWeek = ["Sun", "Mon", "Tue", "Wed", "Thu", "Fri", "Sat"];
 
+  const weeklyDay = date.getDay();
+  
+  const toWeekDay = daysOfWeek[weeklyDay]
+
+  const dayOfMonth = date.getDate();
+
+  const dateOfYear = new Intl.DateTimeFormat('en-US', { month: 'short', day: 'numeric' }).format(date);
+  
   const realCurrentHours = date.getHours();
   const realCurrentMinutes = date.getMinutes();
 
   const [isReminder, setIsReminder] = useState(false);
+  const [isRepeat, setIsRepeat] = useState(false);
+  const [isRepeatCustom, setIsRepeatCustom] = useState(false)
   const [reminderDate, setReminderDate] = useState(date)
   const [open, setOpen] = useState(false)
 
@@ -101,6 +120,7 @@ const WorkTab = () => {
   const [ReminderData, setReminderData] = useState(ReminderDayItems);
 
   const [selectedReminderTime, setSelectedReminderTime] = useState('00:00')
+  const [checkHM, setCheckHM] = useState({ hours: 0, minutes: 0 });
 
   const [finalChoosenDWM, setFinalChoosenDWM] = useState('None')
 
@@ -178,6 +198,11 @@ const WorkTab = () => {
   const handleToDoTaskButton = () => {
     setSelectedDate(CurrentDate)
     setHandleToDoTaskButton(true)
+    Animated.timing(rotationValue, {
+      toValue: pop ? 0 : 1,
+      duration: 300,
+      useNativeDriver: true,
+    }).start();
   }
 
   const handleToDoTaskCancel = () => {
@@ -185,6 +210,12 @@ const WorkTab = () => {
     setTaskName('')
     setDescriptionText('')
     setIsOpenCalendar(false)
+    setPop(false)
+    Animated.timing(rotationValue, {
+      toValue: 0, // Set rotation back to 0 degrees
+      duration: 300,
+      useNativeDriver: true,
+    }).start();
   }
 
   const handleCalendarOpen = () => {
@@ -202,6 +233,15 @@ const WorkTab = () => {
     setIsOpenCalendar(false)
     setPop(false);
     // setSelectedDate()
+  }
+
+  const handleRepeatCalendarCross = () => {
+    setIsRepeatCustom(false)
+    setSelectedDatesRepeat({})
+  }
+
+  const handleRepeatCalendarCheck = () => {
+    setIsRepeatCustom(false)
   }
 
   const handleSettingTimeOpen = () => {
@@ -291,6 +331,70 @@ const WorkTab = () => {
     }
   };
 
+  const handleRepeatOpen = () => {
+    setIsRepeat(true);
+  }
+
+  const handleRepeatCustom = () => {
+    setIsRepeatCustom(true);
+  }
+
+  const handleRepeatCancel = () => {
+    setIsRepeat(false);
+    setSelectedRepeat('None')
+  }
+
+  const handleRepeatSave = () => {
+
+  }
+
+  const [selectedDatesRepeat, setSelectedDatesRepeat] = useState({});
+  const [lengthOfSelectedDates, setLengthOfSelectedDates] = useState(0);
+
+  const handleRepeatDayPress = (day) => {
+    const dateString = day.dateString;
+    console.log("date String : ", dateString)
+
+    // Toggle selection for the clicked date
+    if (selectedDatesRepeat[dateString]) {
+      // Date already selected, remove it from the list
+      const updatedDates = { ...selectedDatesRepeat };
+      delete updatedDates[dateString];
+      setSelectedDatesRepeat(updatedDates);
+    } else {
+      // Date not selected, add it to the list
+      setSelectedDatesRepeat({
+        ...selectedDatesRepeat,
+        [dateString]: { selected: true, selectedColor: '#0FFFFF' },
+      });
+    }
+    
+  };
+  let lengthOfObject = 0;
+  lengthOfObject = Object.keys(selectedDatesRepeat).length;
+  
+  console.log(selectedDatesRepeat)
+  console.log(lengthOfSelectedDates)
+
+  const handleRepeatSelectedValue = (value) => {
+    if (value === 'custom'){
+      setSelectedRepeat(selectedDatesRepeat);
+    }else {
+      setSelectedRepeat(value);
+    }
+  }
+  
+  const [optionSetTimeDuration, setOptionSetTimeDuration] = useState('SetTime');
+  const handleOptionOfSetTimeDuration = (option) => {
+    console.log('opiton : ', option)
+    if (option === 'SetTime'){
+      console.log("option is SetTime")
+      setOptionSetTimeDuration('SetTime')
+    } else {
+      setOptionSetTimeDuration('Duration');
+    }
+  }
+
   useEffect(() => {
     const date = new Date();
 
@@ -352,26 +456,20 @@ const WorkTab = () => {
         </View>
       </View>
 
+      <ScrollView style={styles.TasksInfosContainer}>
+
+      </ScrollView>      
+
       <View style={{
         flex: 1
       }}>
-        <Animated.View style={[styles.circle, { bottom: icon_1, backgroundColor: '#00A86B' }]}>
-          <TouchableOpacity onPress={() => handleToDoTaskButton()}>
-            <FontAwesome5 name="tasks" size={24} color="white" />
-          </TouchableOpacity>
-        </Animated.View>
-
-        <Animated.View
-          style={[styles.circle, { bottom: icon_2, right: AgenRight, backgroundColor: '#f52d56' }]}>
-          <TouchableOpacity>
-            <MaterialIcons name="view-agenda" size={24} color="white" />
-          </TouchableOpacity>
-        </Animated.View>
+        
 
         <TouchableOpacity
           style={styles.circle}
           onPress={() => {
-            pop === false ? popIn() : popOut();
+            // pop === false ? popIn() : popOut();
+            handleToDoTaskButton();
           }}
         >
           <Animated.View style={rotation}>
@@ -379,21 +477,26 @@ const WorkTab = () => {
           </Animated.View>
         </TouchableOpacity>
       </View>
-
-      {HandleToDoTaskButton && (
+      
+      <Modal
+        visible={HandleToDoTaskButton}
+        animationType="slide"
+        transparent={true}
+        onRequestClose={() => handleToDoTaskButton()}
+      >
         <View style={styles.WorkInputContainer}>
           <Text style={{ alignSelf: "center", top: 18, fontWeight: 'bold', fontSize: 16, marginBottom: 20 }}>New "To Do Task"</Text>
           <Text style={styles.TasDesText}>New Task</Text>
           <TextInput
             style={styles.TaskInput}
-            placeholder="Add Task Name"
+            placeholder={newTask}
             value={taskName}
             onChangeText={setTaskName}
           />
           <Text style={styles.TasDesText}>Description</Text>
           <TextInput
             style={styles.DescriptionInput}
-            placeholder="Add Task Description"
+            placeholder= {Description}
             value={descriptionText}
             onChangeText={setDescriptionText}
             multiline={true}
@@ -426,7 +529,10 @@ const WorkTab = () => {
                 <Text style={{ fontSize: 14 }}>Time</Text>
                 <Text>🕓</Text>
               </TouchableOpacity>
-              <TouchableOpacity style={{ width: '100%', height: 38, backgroundColor: '#B9D9EB', borderRadius: 5, justifyContent: 'space-around', flexDirection: 'row', marginTop: 18, alignItems: 'center' }}>
+              <TouchableOpacity 
+                style={{ width: '100%', height: 38, backgroundColor: '#B9D9EB', borderRadius: 5, justifyContent: 'space-around', flexDirection: 'row', marginTop: 18, alignItems: 'center' }}
+                onPress={() => handleRepeatOpen()}
+              >
                 <Text style={{ fontSize: 14 }}>Repeat</Text>
                 <Text>🔁</Text>
               </TouchableOpacity>
@@ -443,14 +549,22 @@ const WorkTab = () => {
             </TouchableOpacity>
 
 
-            <TouchableOpacity style={{ width: '40%', height: 55, alignItems: 'center', backgroundColor: '#0070FF', justifyContent: 'center', borderRadius: 10 }}>
+            <TouchableOpacity
+              style={{ width: '40%', height: 55, alignItems: 'center', backgroundColor: '#0070FF', justifyContent: 'center', borderRadius: 10 }}
+
+            >
               <Text style={{ color: 'white' }}>Create</Text>
             </TouchableOpacity>
           </View>
         </View>
-      )}
+      </Modal>
 
-      {isOpenCalendar && (
+      <Modal
+        visible={isOpenCalendar}
+        animationType="slide"
+        transparent={true}
+        onRequestClose={() => handleSettingTimeOpen()}
+      >
         <View style={styles.calendarStyle}>
           <View style={{ flexDirection: 'row', justifyContent: 'space-between', width: '95%', marginBottom: 10, marginTop: 10, right: 2 }}>
             <TouchableOpacity onPress={() => handleCalendarCross()}>
@@ -493,9 +607,6 @@ const WorkTab = () => {
               console.log('selected day : ', day);
               setSelectedDate(day.dateString);
               console.log("Selected Data : ", selectedDate)
-              // const [year, month, dayOfMonth] = selectedDate.split('-');
-              // const formattedDate = `${dayOfMonth}-${month}-${year}`;
-              // setSelectedDate(formattedDate);
             }}
             hideExtraDays={true}
             firstDay={1}
@@ -507,9 +618,14 @@ const WorkTab = () => {
             }}
           />
         </View>
-      )}
+      </Modal>
 
-      {isOpenSettingTime && (
+      <Modal
+        visible={isOpenSettingTime}
+        animationType="slide"
+        transparent={true}
+        onRequestClose={() => handleSettingTimeOpen()}
+      >
         <View style={styles.setTimeBoxContainer}>
           <View style={{ flexDirection: 'row', justifyContent: 'space-between', width: '92%', alignSelf: 'center', right: 1, marginTop: 15, }}>
             <TouchableOpacity onPress={() => handleSetTimeBoxCancel()}>
@@ -520,88 +636,124 @@ const WorkTab = () => {
               <Text style={{ color: "#468FEA", fontWeight: 'bold', fontSize: 15 }}>OK</Text>
             </TouchableOpacity>
           </View>
-          <Text style={{ marginTop: 15, alignSelf: 'center', fontWeight: 'bold', fontSize: 18, color: 'white' }}>Set Time</Text>
-          <View style={{ flexDirection: 'column-reverse', alignItems: 'center', top: 25 }}>
-            <Text style={styles.AMPMLabel}>{isAM ? 'AM' : 'PM'}</Text>
-            <View style={{ left: 1 }}>
-              <Switch
-                trackColor={{ false: '#767577', true: '#81b0ff' }} // Customize track color
-                thumbColor={isAM ? '#f5dd4b' : '#f4f3f4'} // Customize thumb color
-                onValueChange={toggleSwitch}
-                value={isAM} // Boolean value representing the current state
-              />
+          {/* <View>
+            <Text>
+              Set Time will create a Task
+            </Text>
+            <Text>
+              Duration will create a Agenda
+            </Text>
+          </View> */}
+          <View style={{ flexDirection: 'row', justifyContent: 'space-around'}}>
+            <TouchableOpacity
+              onPress={() => {
+                handleOptionOfSetTimeDuration('SetTime');
+              }}
+              style={[
+                styles.BeforeSelectedSetTimeDuration,
+                optionSetTimeDuration === 'SetTime' && styles.SelectedSetTimeDuration
+              ]}
+            >
+              <Text style={{ fontWeight: 'bold', fontSize: 18, color: 'white' }}>Set Time</Text>
+            </TouchableOpacity>
+            <TouchableOpacity
+              onPress={() => {
+                handleOptionOfSetTimeDuration('Duration');
+              }}
+              style={[
+                styles.BeforeSelectedSetTimeDuration,
+                optionSetTimeDuration === 'Duration' && styles.SelectedSetTimeDuration
+              ]}
+            >
+              <Text style={{ fontWeight: 'bold', fontSize: 18, color: 'white' }}>Duration</Text>
+            </TouchableOpacity>
+          </View>
+          
+          {optionSetTimeDuration === 'SetTime' && (
+            <View>
+              <View style={{ flexDirection: 'column-reverse', alignItems: 'center', top: 25 }}>
+                <Text style={styles.AMPMLabel}>{isAM ? 'AM' : 'PM'}</Text>
+                <View style={{ left: 1 }}>
+                  <Switch
+                    trackColor={{ false: '#767577', true: '#81b0ff' }} // Customize track color
+                    thumbColor={isAM ? '#f5dd4b' : '#f4f3f4'} // Customize thumb color
+                    onValueChange={toggleSwitch}
+                    value={isAM} // Boolean value representing the current state
+                  />
+                </View>
+              </View>
+              <View style={styles.setTimeBox}>
+                <Animated.FlatList
+                  ref={flatListRef_Hours}
+                  data={extendedHours}
+                  keyExtractor={(item, index) => `${item}-${index}`}
+                  renderItem={({ item, index }) => (
+                    <View style={styles.itemContainer}>
+                      <Text
+                        style={[
+                          styles.itemText,
+                          (index + 1) % 12 === selectedHours
+                            ? styles.selectedText
+                            : (index % 13 === 10 && selectedHours === 12)
+                            ? styles.selectedText
+                            : styles.unselectedText,
+                        ]}
+                      >
+                        {item}
+                      </Text>
+                    </View>
+                  )}
+                  showsVerticalScrollIndicator={false}
+                  snapToInterval={ITEM_HEIGHT_HOURS}
+                  decelerationRate="fast"
+                  onScrollEndDrag={handleScrollEnd_Hours}
+                  onMomentumScrollEnd={handleScrollEnd_Hours}
+                  scrollEventThrottle={16}
+                  initialScrollIndex={12} // Start in the middle to allow for looping
+                  getItemLayout={(data, index) => ({
+                    length: ITEM_HEIGHT_HOURS,
+                    offset: ITEM_HEIGHT_HOURS * index,
+                    index,
+                  })}
+                />
+                <Text style={{ fontSize: 35, top: 42, color: 'white', width: '5%', marginLeft: 10, marginRight: 10 }}>:</Text>
+                <Animated.FlatList
+                  ref={flatListRef_Minutes}
+                  data={extendedMinutes}
+                  keyExtractor={(item, index) => `${item}-${index}`}
+                  renderItem={({ item, index }) => (
+                    <View style={styles.itemContainer}>
+                      <Text
+                        style={[
+                          styles.itemText,
+                          index % 60 === selectedMinutes
+                            ? styles.selectedTextMinutes
+                            : styles.unselectedTextMinutes,
+                        ]}
+                      >
+                        {item}
+                      </Text>
+                    </View>
+                  )}
+                  showsVerticalScrollIndicator={false}
+                  snapToInterval={ITEM_HEIGHT_MINUTES}
+                  decelerationRate="fast"
+                  onScrollEndDrag={handleScrollEnd_Minutes}
+                  onMomentumScrollEnd={handleScrollEnd_Minutes}
+                  scrollEventThrottle={16}
+                  initialScrollIndex={60} // Start in the middle to allow for looping
+                  getItemLayout={(data, index) => ({
+                    length: ITEM_HEIGHT_MINUTES,
+                    offset: ITEM_HEIGHT_MINUTES * index,
+                    index,
+                  })}
+                />
+              </View>
             </View>
-          </View>
-          <View style={styles.setTimeBox}>
-            <Animated.FlatList
-              ref={flatListRef_Hours}
-              data={extendedHours}
-              keyExtractor={(item, index) => `${item}-${index}`}
-              renderItem={({ item, index }) => (
-                <View style={styles.itemContainer}>
-                  <Text
-                    style={[
-                      styles.itemText,
-                      (index + 1) % 12 === selectedHours
-                        ? styles.selectedText
-                        : ((index % 13 === 10) && selectedHours === 12)
-                          ? styles.selectedText
-                          : styles.unselectedText,
-                    ]}
-                  >
-                    {item}
-                  </Text>
-                </View>
-              )}
-              showsVerticalScrollIndicator={false}
-              snapToInterval={ITEM_HEIGHT_HOURS}
-              decelerationRate="fast"
-              onScrollEndDrag={handleScrollEnd_Hours}
-              onMomentumScrollEnd={handleScrollEnd_Hours}
-              scrollEventThrottle={16}
-              initialScrollIndex={12} // Start in the middle to allow for looping
-              getItemLayout={(data, index) => ({
-                length: ITEM_HEIGHT_HOURS,
-                offset: ITEM_HEIGHT_HOURS * index,
-                index,
-              })}
-            />
-            <Text style={{ fontSize: 35, top: 42, color: 'white', width: '5%', marginLeft: 10, marginRight: 10 }}>:</Text>
-            <Animated.FlatList
-              ref={flatListRef_Minutes}
-              data={extendedMinutes}
-              keyExtractor={(item, index) => `${item}-${index}`}
-              renderItem={({ item, index }) => (
-                <View style={styles.itemContainer}>
-                  <Text
-                    style={[
-                      styles.itemText,
-                      (index) % 60 === selectedMinutes
-                        ? styles.selectedTextMinutes
-                        : styles.unselectedTextMinutes
-                    ]}
-                  >
-                    {item}
-                  </Text>
-                </View>
-              )}
-              showsVerticalScrollIndicator={false}
-              snapToInterval={ITEM_HEIGHT_MINUTES}
-              decelerationRate="fast"
-              onScrollEndDrag={handleScrollEnd_Minutes}
-              onMomentumScrollEnd={handleScrollEnd_Minutes}
-              scrollEventThrottle={16}
-              initialScrollIndex={60} // Start in the middle to allow for looping
-              getItemLayout={(data, index) => ({
-                length: ITEM_HEIGHT_MINUTES,
-                offset: ITEM_HEIGHT_MINUTES * index,
-                index,
-              })}
-            />
+          )}
 
-          </View>
         </View>
-      )}
+      </Modal>
 
       {/* Reminder Modal */}
       <Modal
@@ -611,7 +763,7 @@ const WorkTab = () => {
         onRequestClose={() => setIsReminder(false)}
       >
         <View style={styles.modalContainer}>
-          <View style={styles.modalContent}>
+          <View style={[styles.modalContent, {alignItems: 'center',}]}>
             <View style={styles.selectorContainer}>
               <TouchableOpacity
                 onPress={() => handleReminderSelect('days')}
@@ -691,7 +843,13 @@ const WorkTab = () => {
                   console.log(`Hour: ${hours}, Minute: ${minutes}`);
                   const formattedTime = `${hours.toString().padStart(2, '0')}:${minutes.toString().padStart(2, '0')}`;
                   console.log("formattedTime : ", formattedTime);
-                  console.log('adf')
+                  setCheckHM({hours, minutes})
+                  console.log('checkHM H : ', checkHM.hours ,'checkHM M : ', checkHM.minutes)
+                  console.log(realCurrentHours, ' : ', realCurrentMinutes)
+                  if (checkHM.hours === realCurrentHours && checkHM.minutes === realCurrentMinutes){
+                    console.log("Reminder time matches the current time!");
+                  }
+            
                 }}
               />
             )}
@@ -712,6 +870,193 @@ const WorkTab = () => {
               </TouchableOpacity>
             </View>
           </View>
+        </View>
+      </Modal>
+      <Modal
+        visible={isRepeat}
+        animationType="slide"
+        transparent={true}
+        onRequestClose={() => setIsRepeat(false)}
+      >
+        <View style={[styles.modalContainer]}>
+            <View style={[styles.modalContent]}>
+              <Text style={{fontWeight: 800, fontSize: 16.5, alignSelf: 'center'}}>
+                Repeat
+              </Text>
+              <TouchableOpacity
+                style={styles.RepeatOptions}
+                onPress={() => {handleRepeatSelectedValue('none')}}
+              >
+                <Text style={[styles.RepeatOptionText, selectedRepeat === 'none' && styles.selectedRepeatOption ]}>
+                  None
+                </Text>
+                {selectedRepeat === 'none' && (
+                  <FontAwesome6 name="check" size={18} color="#36C8E2" style={{top: 7}}/>
+                )}
+                
+              </TouchableOpacity>
+              <TouchableOpacity
+                style={styles.RepeatOptions}
+                onPress={() => {handleRepeatSelectedValue('daily')}}
+              >
+                <Text style={[styles.RepeatOptionText, selectedRepeat === 'daily' && styles.selectedRepeatOption]}>
+                  Daily
+                </Text>
+                {selectedRepeat === 'daily' && (
+                  <FontAwesome6 name="check" size={18} color="#36C8E2" style={{top: 7}}/>
+                )}
+              </TouchableOpacity>
+              <TouchableOpacity
+                style={styles.RepeatOptions}
+                onPress={() => {handleRepeatSelectedValue('weekly')}}
+              >
+                <Text style={[styles.RepeatOptionText, selectedRepeat === 'weekly' && styles.selectedRepeatOption]}>
+                  Weekly
+                </Text>
+                <Text style={{fontSize: 14, color:'#8C92AC', }}>
+                  {toWeekDay}
+                </Text>
+                {selectedRepeat === 'weekly' && (
+                  <FontAwesome6 name="check" size={18} color="#36C8E2" style={{top: 7}}/>
+                )}
+              </TouchableOpacity>
+              <TouchableOpacity
+                style={styles.RepeatOptions}
+                onPress={() => {handleRepeatSelectedValue('monthly')}}
+              >
+                <Text style={[styles.RepeatOptionText, selectedRepeat === 'monthly' && styles.selectedRepeatOption]}>
+                  Monthly
+                </Text>
+                <Text style={{fontSize: 14, color:'#8C92AC', }}>
+                  {dayOfMonth} Of Months
+                </Text>
+                {selectedRepeat === 'monthly' && (
+                  <FontAwesome6 name="check" size={18} color="#36C8E2" style={{top: 7}}/>
+                )}
+              </TouchableOpacity>
+              <TouchableOpacity
+                style={styles.RepeatOptions}
+                onPress={() => {
+                  handleRepeatSelectedValue('yearly'); 
+                }}
+              >
+                <Text style={[styles.RepeatOptionText, selectedRepeat === 'yearly' && styles.selectedRepeatOption]}>
+                  Yearly
+                </Text>
+                <Text style={{fontSize: 14, color:'#8C92AC', }}>
+                  {dateOfYear} Of Years
+                </Text>
+                {selectedRepeat === 'yearly' && (
+                  <FontAwesome6 name="check" size={24} color="#36C8E2" />
+                )}
+              </TouchableOpacity>
+              <TouchableOpacity
+                style={styles.RepeatOptions}
+                onPress={() => {
+                  handleRepeatSelectedValue('weekdays'); 
+                }}
+              >
+                <Text style={[styles.RepeatOptionText, selectedRepeat === 'weekdays' && styles.selectedRepeatOption]}>
+                  Mon To Fri Ever
+                </Text>
+                {selectedRepeat === 'weekdays' && (
+                  <FontAwesome6 name="check" size={18} color="#36C8E2" style={{top: 7}}/>
+                )}
+              </TouchableOpacity>
+              <TouchableOpacity
+                style={[styles.RepeatOptions, {alignSelf: 'center'}]}
+                onPress={() => {
+                  handleRepeatSelectedValue('custom');
+                  handleRepeatCustom();
+                }}
+              >
+                <Text style={[styles.RepeatOptionText, selectedRepeat === 'custom' && styles.selectedRepeatOption]}>
+                  Custom
+                </Text>
+              </TouchableOpacity>
+              
+
+              <View style={{flexDirection: 'row', justifyContent: 'space-between'}}>
+                <TouchableOpacity
+                  style={{marginTop: 22}}
+                  onPress={() => handleRepeatCancel()}
+                >
+                  <Text 
+                    style={{fontSize: 15, fontWeight: 500}}
+                  >
+                    CANCEL
+                  </Text>
+                </TouchableOpacity>
+                <TouchableOpacity
+                  style={{marginTop: 22}}
+                  
+                >
+                  <Text style={{fontSize: 16, fontWeight: 500}}>
+                    SAVE
+                  </Text>
+                </TouchableOpacity>
+              </View>
+            </View>
+
+        </View>
+      </Modal>
+      <Modal
+        visible={isRepeatCustom}
+        animationType="slide"
+        transparent={true}
+        onRequestClose={() => setIsRepeatCustom(false)}
+      >
+        <View style={styles.modalContainer}>
+        <View style={styles.calendarStyle}>
+          <View style={{ flexDirection: 'row', justifyContent: 'space-between', width: '95%', marginBottom: 10, marginTop: 10, right: 2 }}>
+            <TouchableOpacity onPress={() => handleRepeatCalendarCross()}>
+              <Entypo name="cross" size={28} color="white" />
+            </TouchableOpacity>
+            <Text style={{color: 'white', fontSize: 14, top: 25}}>You can repeat one or more dates</Text>
+            <TouchableOpacity onPress={() => handleRepeatCalendarCheck()}>
+              <FontAwesome name="check" size={22} color="white" />
+            </TouchableOpacity>
+          </View>
+          <Calendar
+            style={{
+              borderColor: 'gray',
+              height: 350,
+              width: 300,
+              backgroundColor: '#555555',
+              marginTop: 20
+            }}
+            markingType={'custom'}
+            theme={{
+              backgroundColor: '#555555',
+              calendarBackground: '#555555',
+              textSectionTitleColor: '#fff',
+              selectedDayBackgroundColor: '#fff',
+              selectedDayTextColor: '#ffffff',
+              todayTextColor: '#00adf5',
+              dayTextColor: '#fff',
+              textDisabledColor: '#fff',
+              monthTextColor: '#00BFFF',
+              arrowColor: '#0FFFFF',
+              textDayFontFamily: 'monospace',
+              textMonthFontFamily: 'monospace',
+              textDayFontWeight: '400',
+              textMonthFontWeight: 'bold',
+              textDayFontSize: 16,
+              textMonthFontSize: 20,
+              textDayHeaderFontSize: 15,
+            }}
+            onDayPress={handleRepeatDayPress}
+            hideExtraDays={true}
+            firstDay={1}
+            markedDates={selectedDatesRepeat}
+          />
+          
+          <Text style={{color: 'white', marginBottom: 10}}>
+            {lengthOfObject} selected
+          </Text>
+          
+        </View>
+          
         </View>
       </Modal>
     </View>
@@ -756,14 +1101,14 @@ const styles = StyleSheet.create({
   WorkInputContainer: {
     position: 'absolute',
     width: '95%',
-    top: '20%',
+    top: '9%',
     // height: '100%',
     backgroundColor: '#89CFF0',
     alignSelf: 'center',
     borderRadius: 20,
     // zIndex: 20,
     flex: 1,
-    // elevation: 6,
+    
   },
   TasDesText: {
     marginTop: 14,
@@ -798,12 +1143,11 @@ const styles = StyleSheet.create({
   calendarStyle: {
     position: 'absolute',
     alignSelf: 'center',
-    // justifyContent: 'center',
     alignItems: 'center',
     top: 220,
     zIndex: 10,
     width: 350,
-    height: 440,
+    height: 460,
     backgroundColor: '#555555',
     borderRadius: 10,
   },
@@ -920,7 +1264,7 @@ const styles = StyleSheet.create({
     shadowOpacity: 0.2,
     shadowRadius: 5,
     elevation: 5,
-    alignItems: 'center',
+    // alignItems: 'center',
   },
   flatListContainer: {
     paddingVertical: 10,
@@ -977,7 +1321,33 @@ const styles = StyleSheet.create({
   selectedReminderDWMButton: {
     borderBottomColor: 'blue',
   },
-
+  RepeatOptions: {
+    flexDirection: 'row',
+    top: 5,
+    paddingVertical: 15,
+    borderBottomColor: '#333',
+    borderBottomWidth: 0.5, 
+    justifyContent: 'space-between'
+  },
+  RepeatOptionText: {
+    // color: '#FFF',
+    fontSize: 16,
+  },
+  selectedRepeatOption: {
+    color: '#36C8E2', 
+  },
+  TasksInfosContainer: {
+    marginTop:'10%',
+    width: '100%',
+  },
+  SelectedSetTimeDuration: {
+    borderBottomColor: '#36C8E2'
+  },
+  BeforeSelectedSetTimeDuration: {
+    marginTop: 15,
+    borderBottomWidth: 2,
+    borderBottomColor: 'transparent',
+  }
 })
 
 export default WorkTab
